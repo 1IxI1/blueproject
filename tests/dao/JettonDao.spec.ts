@@ -2134,6 +2134,26 @@ describe('DAO integrational', () => {
         //     });
         // });
     });
+    it('should fail on trying to create voting with type 2', async () => {
+        expirationDate = getRandomExp(blockchain.now);
+        const createBody = beginCell().storeUint(Op.minter.create_voting, 32).storeUint(0, 64) // op, queryId
+                                      .storeUint(expirationDate, 48).storeRef(Cell.EMPTY) // proposal
+                                      .storeUint(2, 64) // voting type
+                            .endCell();
+        const createRes = await blockchain.sendMessage(internal({
+            from: user1.address,
+            to: DAO.address,
+            value: toNano("0.1"),
+            body: createBody
+        }))
+        expect(createRes.transactions).toHaveTransaction({
+            from: user1.address,
+            to: DAO.address,
+            success: false,
+            exitCode: Errors.minter.forbidden_vote_type
+        });
+    });
+
     it('should not create type 1 voting if only polls', async () => {
         // edit file ../../contracts/external_params.func, set line 8 to
         //  const int external_param::only_polls = 1;
@@ -2172,7 +2192,7 @@ describe('DAO integrational', () => {
             from: user1.address,
             to: _DAO.address,
             success: false,
-            exitCode: Errors.minter.forbidden_vote_id
+            exitCode: Errors.minter.forbidden_vote_type
         });
     });
 });

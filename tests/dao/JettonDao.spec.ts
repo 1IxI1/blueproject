@@ -9,6 +9,7 @@ import { VoteKeeper } from '../../wrappers/VoteKeeper';
 import '@ton-community/test-utils';
 import { compile } from '@ton-community/blueprint';
 import { assertVoteChain, differentAddress, getRandom, getRandomDuration, getRandomExp, getRandomInt, getRandomPayload, getRandomTon, voteCtx, ActiveWallet, ActiveJettonWallet, pickWinnerResult, sortBalanceResult } from "../utils";
+import { bocWithSizeOf } from '../sizedBoc';
 import { VotingTests } from '../../wrappers/VotingTests';
 import { VoteKeeperTests } from '../../wrappers/VoteKeeperTests';
 import { Op } from '../../Ops';
@@ -2087,7 +2088,51 @@ describe('DAO integrational', () => {
                 expect(resultsData.votesAgainst).toEqual(0n);
             });
         });
-        // TODO: test with huge proposal. will it break something?
+        const MAX_PROPOSAL_SIZE = 8192;
+        it('should reach max proposal size', async () => {
+            pollBody = bocWithSizeOf(MAX_PROPOSAL_SIZE / 8 - 50);
+            const voting = await votingContract(++votingId);
+            const votingResults = await resultsContract(duration, pollBody);
+            const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody);
+            expect(createRes.transactions).not.toHaveTransaction({ success: false });
+            const votingData = await voting.getFullData();
+            const resultsData = await votingResults.getData();
+            expect(votingData.votingId).toEqual(votingId);
+            expect(resultsData.votingId).toEqual(votingId);
+            expect(resultsData.votingBody).toEqualCell(pollBody);
+            expect(resultsData.votingDuration).toEqual(duration);
+        });
+        it('should fail to create voting with too big proposal', async () => {
+            pollBody = bocWithSizeOf(MAX_PROPOSAL_SIZE / 8 + 50);
+            const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody);
+            expect(createRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                success: false,
+                exitCode: Errors.minter.proposal_too_big
+            });
+        });
+        // it('if not enough for init, should fail on action phase not on voting results side', async () => {
+        //     pollBody = bocWithSizeOf(MAX_PROPOSAL_SIZE / 8 - 50);
+        //     duration = getRandomDuration();
+        //     const voting = await votingContract(++votingId);
+        //     const votingResults = await resultsContract(duration, pollBody);
+        //     const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody, toNano('0.07'));
+        //     expect(createRes.transactions).toHaveTransaction({
+        //         from: user1.address,
+        //         to: DAO.address,
+        //         success: false,
+        //         actionResultCode: 37
+        //     });
+        //     expect(createRes.transactions).not.toHaveTransaction({
+        //         from: DAO.address,
+        //         to: voting.address
+        //     });
+        //     expect(createRes.transactions).not.toHaveTransaction({
+        //         from: DAO.address,
+        //         to: votingResults.address
+        //     });
+        // });
     });
     it('should not create type 1 voting if only polls', async () => {
         // edit file ../../contracts/external_params.func, set line 8 to

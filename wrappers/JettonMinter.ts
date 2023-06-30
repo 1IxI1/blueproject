@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano, internal, storeMessageRelaxed} from 'ton-core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from 'ton-core';
 import { Op } from '../Ops';
 import { Voting } from './Voting';
 
@@ -141,11 +141,11 @@ export class JettonMinter implements Contract {
     }
 
     async sendCreatePollVoting(provider: ContractProvider, via: Sender, duration: bigint | number,
-                               body: string | Cell = "Sample description") {
+                               body: string | Cell = "Sample description", value: bigint = toNano("0.2")) {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: JettonMinter.createPollVotingMessage(duration, body),
-            value: toNano("0.1"),
+            value,
         });
                                }
     static createCodeUpgradeMessage(minter_code: Cell | null, voting_code: Cell | null, query_id:bigint = 0n) {

@@ -12,8 +12,10 @@
 ;; 6905(computational_gas_price) * 1000(cur_gas_price) = 6905000
 ;; ceil(6905000) = 10000000 ~= 0.01 TON
 const int provide_address_gas_consumption = 10000000;
+
 const int provide_voting_data_gas_consumption = 20000000;
-const int voting_results_init_fee = 20000000;
+const int voting_results_init_fee = 10000000;
+const int max_create_voting_fwd_fee = 10000000;
 
 
 ;; storage scheme
@@ -262,6 +264,8 @@ int is_proposal_accepted(int voted_for, int voted_against, int total_votes) inli
                     .store_msgbody_prefix_stateinit(state_init, msg_body);
             send_raw_message(msg.end_cell(), CARRY_REMAINING_GAS);
         } elseif (voting_type == 1) { ;;no execution, voting results
+            ;; by checking fwd_fee we're limiting proposal by ~1kB
+            throw_unless(error::proposal_too_big, fwd_fee < max_create_voting_fwd_fee);
             slice cs  = proposal.begin_parse();
             ;; expiration date in first 48 bits is useless?
             int voting_duration = cs~load_uint(48);
@@ -281,7 +285,7 @@ int is_proposal_accepted(int voted_for, int voted_against, int total_votes) inli
             var vr_msg = begin_cell()
                     .store_msg_flag(msg_flag::bounceable)
                     .store_slice(voting_results)
-                    .store_coins(voting_results_init_fee)
+                    .store_coins(voting_results_init_fee + fwd_fee)
                     .store_msgbody_prefix_stateinit(vr_state_init, vr_msg_body);
             send_raw_message(vr_msg.end_cell(), REVERT_ON_ERRORS);
             var msg_body = begin_cell()

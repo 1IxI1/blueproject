@@ -49,7 +49,7 @@ Voting scheme:
 
 Voting creation scheme:
     // directly through DAO
-    Anybody -(create_voting)-> DAO -(init_voting)-> Voting -(voting_initiated)-> DAO -(voting_created)-> Anybody
+    Anybody -(create_voting)-> DAO -(init_voting) 
     // through wallet (onchain way, where owner knows wallet, but not the jetton_master)
     User -(create_voting_with_wallet)-> Wallet -(create_voting)-> DAO -(init_voting)-> Voting -(voting_initiated)-> DAO -(voting_created)-> Wallet -(voting_confirmation)-> User
 */

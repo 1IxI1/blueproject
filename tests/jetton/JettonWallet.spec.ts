@@ -24,6 +24,7 @@ import { Errors } from "../../Errors";
 let fwd_fee = 1804014n, gas_consumption = 11500000n, min_tons_for_storage = 10000000n, max_voting_duration = 2592000;
 
 describe('JettonWallet', () => {// return;
+    jest.setTimeout(15000);
     let jwallet_code = new Cell();
     let minter_code = new Cell();
     let voting_code = new Cell();
@@ -109,10 +110,7 @@ describe('JettonWallet', () => {// return;
                     exitCode: expErr
                 });
             }
-
             return res;
-
-
         }
     });
 

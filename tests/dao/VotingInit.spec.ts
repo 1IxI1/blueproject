@@ -54,12 +54,6 @@ describe('Voting init unit tests', () => {
             success: true,
             deploy: true
         });
-        expect(res.transactions).toHaveTransaction({
-            from: voting.address,
-            on: master.address,
-            body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, userWallet.address)
-
-        });
         const votingData = await voting.getFullData();
 
         expect(votingData.init).toEqual(true);
@@ -105,11 +99,6 @@ describe('Voting init unit tests', () => {
             success: false,
             exitCode: Errors.voting.already_inited
         });
-        expect(res.transactions).not.toHaveTransaction({
-            from: voting.address,
-            on: userWallet.address,
-            body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, userWallet.address)
-        });
         votingId++;
  
         
@@ -137,12 +126,5 @@ describe('Voting init unit tests', () => {
             success: false,
             exitCode:Errors.voting.unauthorized_init
         });
-        expect(res.transactions).not.toHaveTransaction({
-            from: voting.address,
-            on: userWallet.address,
-            body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, userWallet.address)
-
-        });
- 
     });
 });

@@ -267,20 +267,10 @@ describe('DAO integrational', () => {
 
             // Voting initiated message to DAO
             expect(createSimpleMsgVoting.transactions).toHaveTransaction({
-                from: voting.address,
-                on: DAO.address,
-                body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, user1.address)
+                from: DAO.address,
+                on: voting.address,
+                success: true
             });
-
-            // Confirmation message
-            expect(createSimpleMsgVoting.transactions).toHaveTransaction({ //notification
-                        from: DAO.address,
-                        on: user1.address,
-                        body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                                         .storeUint(0, 64) //query_id
-                                         .storeAddress(voting.address) //voting_code
-                                         .endCell()
-                    });
 
             const votingData = await voting.getFullData();
 
@@ -298,57 +288,6 @@ describe('DAO integrational', () => {
             expect(votingData.votedFor).toEqual(0n);
             expect(votingData.votedAgainst).toEqual(0n);
             expect(votingData.votingType).toEqual(0n);
-    });
-
-    it('DAO should not allow voting initiated message from non-voting', async () =>{
-        const voting   = await votingContract(votingId);
-
-        let   res = await testDAO.sendVotingInitiated(user1.getSender(),
-                                                      votingId,
-                                                      expirationDate,
-                                                      user1.address);
-        expect(res.transactions).toHaveTransaction({
-            from: user1.address,
-            on: DAO.address,
-            success: false,
-            exitCode: Errors.minter.unauthorized_vote_execution
-        });
-
-        const voteSender = blockchain.sender(voting.address);
-
-        res = await testDAO.sendVotingInitiated(voteSender,
-                                                votingId + 1n, // Incorrect voting id
-                                                expirationDate,
-                                                user1.address);
-                                            //
-        // Voting with different id would get different address
-        expect(res.transactions).toHaveTransaction({
-            from: voting.address,
-            on: DAO.address,
-            success: false,
-            exitCode: Errors.minter.unauthorized_vote_execution
-        });
-
-        res = await testDAO.sendVotingInitiated(voteSender,
-                                                votingId, // Correct id
-                                                expirationDate,
-                                                user1.address);
-        expect(res.transactions).toHaveTransaction({
-            from: voting.address,
-            on: DAO.address,
-            success: true
-        });
-
-        expect(res.transactions).toHaveTransaction({
-            from: DAO.address,
-            on: user1.address,
-            body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                             .storeUint(0, 64) //query_id
-                             .storeAddress(voting.address) //voting_code
-                             .endCell()
-
-        });
-
     });
 
     it('jetton owner can vote for', async () => {
@@ -541,12 +480,8 @@ describe('DAO integrational', () => {
 
             expect(createSimpleMsgVoting.transactions).toHaveTransaction({
                 from: DAO.address,
-                on: user1.address,
-                body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                                         .storeUint(0, 64) //query_id
-                                         .storeAddress(voting.address) //voting_code
-                                         .endCell()
-
+                on: voting.address,
+                success: true
             });
             let votingData = await voting.getData();
 
@@ -789,13 +724,10 @@ describe('DAO integrational', () => {
                 winMsg // payload
             );
 
-            expect(votingRes.transactions).toHaveTransaction({ //notification
+            expect(votingRes.transactions).toHaveTransaction({ // init voting
                         from: DAO.address,
-                        on: user1.address,
-                        body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                                         .storeUint(0, 64) //query_id
-                                         .storeAddress(voting.address) //voting_code
-                                         .endCell()
+                        to: voting.address,
+                        success: true
             });
 
             const comp = await pickWinner(user1, user2);
@@ -858,13 +790,10 @@ describe('DAO integrational', () => {
                 winMsg// payload
             );
 
-            expect(votingRes.transactions).toHaveTransaction({ //notification
+            expect(votingRes.transactions).toHaveTransaction({ //voting init
                         from: DAO.address,
-                        on: user1.address,
-                        body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                                         .storeUint(0, 64) //query_id
-                                         .storeAddress(voting.address) //voting_code
-                                         .endCell()
+                        to: voting.address,
+                        success: true
             });
 
             const comp = await pickWinner(user1, user2);
@@ -1528,23 +1457,12 @@ describe('DAO integrational', () => {
                     deploy: true
                 });
 
-                // Voting initiated message to DAO
+                // Voting init
                 expect(createVoting.transactions).toHaveTransaction({
-                    from: voting.address,
-                    on: DAO.address,
-                    success: true,
-                    body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, user1.address)
+                    from: DAO.address,
+                    on: voting.address,
+                    success: true
                 });
-
-                // Confirmation message
-                expect(createVoting.transactions).toHaveTransaction({ //notification
-                            from: DAO.address,
-                            on: user1.address,
-                            body: beginCell().storeUint(Op.minter.voting_created, 32) //// voting created
-                                             .storeUint(0, 64) //query_id
-                                             .storeAddress(voting.address) //voting_code
-                                             .endCell()
-                        });
 
                 const votingData = await voting.getFullData();
 
@@ -1682,20 +1600,14 @@ describe('DAO integrational', () => {
                 deploy: true
             });
             expect(createRes.transactions).toHaveTransaction({
-                from: voting.address,
-                on: DAO.address,
-                success: true,
-                body: JettonMinterTests.createVotingInitiated(votingId, expirationDate, user1.address)
-            });
-            expect(createRes.transactions).toHaveTransaction({
                 from: DAO.address,
-                to: user1.address,
-                body: JettonMinterTests.createVotingCreated(voting.address)
+                on: voting.address,
+                success: true,
             });
 
             const balanceAfter = (await blockchain.getContract(DAO.address)).balance;
-            expect(balanceAfter).toBeGreaterThanOrEqual(balanceBefore);
             console.log("Create voting balance increase:", fromNano((balanceAfter - balanceBefore)));
+            expect(balanceAfter).toBeGreaterThanOrEqual(balanceBefore);
         });
         let initBody: Cell;
         let sendVoteResBody: Cell;
@@ -2160,7 +2072,6 @@ describe('DAO integrational', () => {
                 to: (x) => x.equals(voting.address) || x.equals(votingResults.address)
             });
             const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody, value + 1n);
-            printTransactionFees(createRes.transactions);
             expect(createRes.transactions).toHaveTransaction({
                 from: user1.address,
                 to: DAO.address,

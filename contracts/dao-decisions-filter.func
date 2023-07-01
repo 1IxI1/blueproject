@@ -55,8 +55,6 @@ int pass_the_filter?(cell msg) {
         return false;
     } elseif (op == op::init_voting) {
         return false;
-    } elseif (op == op::voting_created) {
-        return false;
     } elseif (op == op::send_vote_result) {
         return false;
     } elseif (op == op::confirm_voting) {

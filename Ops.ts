@@ -12,7 +12,6 @@ export abstract class Op {
 	static readonly create_voting_through_wallet = 0x318eff17;
 	static readonly confirm_voting = 0x039a374e;
 	static readonly vote_confirmation = 0x5fe9b8ca;
-	static readonly voting_confirmation = 0x2ccba006;
 	
 	// Voting
 	static readonly voting = {
@@ -30,9 +29,7 @@ export abstract class Op {
 		upgrade_code : 0x34aea60d,
 		
 		create_voting : 0x1c7f9a1a,
-		voting_initiated : 0x8e2abb23,
 		execute_vote_result : 0x4f0f7510,
-		voting_created : 0xc39f0be6, // to user
 		request_confirm_voting : 0x0222fdcb,
 		
 		

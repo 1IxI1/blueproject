@@ -14,7 +14,8 @@
 const int provide_address_gas_consumption = 10000000;
 
 const int provide_voting_data_gas_consumption = 20000000;
-const int voting_results_init_fee = 10000000;
+const int voting_results_init_fee = 20000000;
+const int voting_init_fee = 80000000;
 const int max_create_voting_fwd_fee = 10000000;
 
 
@@ -267,6 +268,9 @@ int is_proposal_accepted(int voted_for, int voted_against, int total_votes) inli
         } elseif (voting_type == 1) { ;;no execution, voting results
             ;; by checking fwd_fee we're limiting proposal by ~1kB
             throw_unless(error::proposal_too_big, fwd_fee < max_create_voting_fwd_fee);
+            ;; first init_fee for voting init, second + fwd_fee for voting_results init
+            throw_unless(error::not_enough_money, msg_value > voting_results_init_fee + voting_init_fee + fwd_fee);
+
             slice cs  = proposal.begin_parse();
             ;; expiration date in first 48 bits is useless?
             int voting_duration = cs~load_uint(48);

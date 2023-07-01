@@ -2111,27 +2111,74 @@ describe('DAO integrational', () => {
                 exitCode: Errors.minter.proposal_too_big
             });
         });
-        // it('if not enough for init, should fail on action phase not on voting results side', async () => {
-        //     pollBody = bocWithSizeOf(MAX_PROPOSAL_SIZE / 8 - 50);
-        //     duration = getRandomDuration();
-        //     const voting = await votingContract(++votingId);
-        //     const votingResults = await resultsContract(duration, pollBody);
-        //     const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody, toNano('0.07'));
-        //     expect(createRes.transactions).toHaveTransaction({
-        //         from: user1.address,
-        //         to: DAO.address,
-        //         success: false,
-        //         actionResultCode: 37
-        //     });
-        //     expect(createRes.transactions).not.toHaveTransaction({
-        //         from: DAO.address,
-        //         to: voting.address
-        //     });
-        //     expect(createRes.transactions).not.toHaveTransaction({
-        //         from: DAO.address,
-        //         to: votingResults.address
-        //     });
-        // });
+        it('should not deploy partly if not enough gas, only throw on request', async () => {
+            pollBody = bocWithSizeOf(MAX_PROPOSAL_SIZE / 8 - 60);
+            duration = getRandomDuration();
+            voting = await votingContract(++votingId);
+            votingResults = await resultsContract(duration, pollBody);
+            const successCreateRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody);
+            expect(successCreateRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                success: true,
+            });
+            expect(successCreateRes.transactions).toHaveTransaction({
+                from: DAO.address,
+                to: voting.address,
+                success: true,
+                deploy: true
+            });
+            expect(successCreateRes.transactions).toHaveTransaction({
+                from: DAO.address,
+                to: votingResults.address,
+                success: true,
+                deploy: true
+            });
+            // take fwd fee from success creation out msgs
+            let walletTx = successCreateRes.transactions[0];
+            if (walletTx.description.type !== 'generic') throw new Error('Unexpected tx type');
+            const fwd_fee = walletTx.description.actionPhase?.totalFwdFees! + 72n; // 72 nTON for address - was 00 on sending, became wallet address on receiving
+
+            duration = getRandomDuration();
+            voting = await votingContract(++votingId);
+            votingResults = await resultsContract(duration, pollBody);
+            const value = toNano("0.02") + toNano("0.08") + fwd_fee; // voting, voting_results init fees
+            const createFailRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody, value);
+
+            walletTx = createFailRes.transactions[0];
+            if (walletTx.description.type !== 'generic') throw new Error('Unexpected tx type');
+            const new_fwd_fee = walletTx.description.actionPhase?.totalFwdFees! + 72n;
+            expect(new_fwd_fee).toEqual(fwd_fee);
+
+            expect(createFailRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                exitCode: Errors.voting.not_enough_money
+            });
+            expect(createFailRes.transactions).not.toHaveTransaction({
+                from: DAO.address,
+                to: (x) => x.equals(voting.address) || x.equals(votingResults.address)
+            });
+            const createRes = await DAO.sendCreatePollVoting(user1.getSender(), duration, pollBody, value + 1n);
+            printTransactionFees(createRes.transactions);
+            expect(createRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                success: true,
+            });
+            expect(createRes.transactions).toHaveTransaction({
+                from: DAO.address,
+                to: voting.address,
+                success: true,
+                deploy: true
+            });
+            expect(createRes.transactions).toHaveTransaction({
+                from: DAO.address,
+                to: votingResults.address,
+                success: true,
+                deploy: true
+            });
+        });
     });
     it('should fail on trying to create voting with type 2', async () => {
         expirationDate = getRandomExp(blockchain.now);

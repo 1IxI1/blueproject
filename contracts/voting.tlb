@@ -78,7 +78,6 @@ init_voting#182d8ddd query_id:uint64 expiration_date:uint48 voting_type:uint64 w
 submit_votes#6edb1889 query_id:uint64 voter:MsgAddressInt expiration_date:uint48 weight:Coins vote:Bool need_confirmation:Bool = InternalMsgBody;
 end_voting#66173a45 query_id:uint64 = InternalMsgBody;
 //out
-//voting_initiated
 //request_confirm_voting
 //execute_vote_result
 

@@ -1432,6 +1432,66 @@ describe('DAO integrational', () => {
                 success: true
             });
         });
+        it('should not create if not enough money for deploy voting', async () => {
+            let voting = await votingContract(++votingId);
+            expirationDate = getRandomExp(blockchain.now);
+            const payload  = getRandomPayload();
+            const winMsg   = genMessage(user1.address, payload);
+
+            const execAmount = getRandomTon(1, 10);
+
+            const successCreateRes = await DAO.sendCreateSimpleMsgVoting(user1.getSender(),
+                expirationDate,
+                execAmount, // minimal_execution_amount
+                winMsg, // payload
+            );
+
+            let walletTx = successCreateRes.transactions[0];
+            if (walletTx.description.type !== 'generic') throw new Error('Unexpected tx type');
+            const fwd_fee = walletTx.description.actionPhase?.totalFwdFees! + 14n;
+
+            voting = await votingContract(++votingId);
+            const value = toNano("0.08") + fwd_fee; // voting init + delivery proposal fees
+            const createFailRes = await DAO.sendCreateSimpleMsgVoting(user1.getSender(),
+                expirationDate,
+                execAmount, // minimal_execution_amount
+                winMsg, // payload
+                value
+            );
+            walletTx = createFailRes.transactions[0];
+            if (walletTx.description.type !== 'generic') throw new Error('Unexpected tx type');
+            const new_fwd_fee = walletTx.description.actionPhase?.totalFwdFees! + 14n;
+            expect(new_fwd_fee).toEqual(fwd_fee);
+
+            expect(createFailRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                exitCode: Errors.voting.not_enough_money
+            });
+            expect(createFailRes.transactions).not.toHaveTransaction({
+                from: DAO.address,
+                to: voting.address,
+            });
+            const createRes = await DAO.sendCreateSimpleMsgVoting(user1.getSender(),
+                expirationDate,
+                execAmount, // minimal_execution_amount
+                winMsg, // payload
+                value + 1n
+            );
+            expect(createRes.transactions).toHaveTransaction({
+                from: user1.address,
+                to: DAO.address,
+                success: true,
+            });
+            expect(createRes.transactions).toHaveTransaction({
+                from: DAO.address,
+                to: voting.address,
+                success: true,
+                deploy: true
+            });
+            const votingBalance = (await blockchain.getContract(voting.address)).balance;
+            expect(votingBalance).toBeGreaterThanOrEqual(toNano("0.04"));
+        });
         describe('Poll type voting (with send result)', () => {
             const voteType = 1n;
             let duration : number;
@@ -1606,7 +1666,6 @@ describe('DAO integrational', () => {
             });
 
             const balanceAfter = (await blockchain.getContract(DAO.address)).balance;
-            console.log("Create voting balance increase:", fromNano((balanceAfter - balanceBefore)));
             expect(balanceAfter).toBeGreaterThanOrEqual(balanceBefore);
         });
         let initBody: Cell;
@@ -2089,6 +2148,8 @@ describe('DAO integrational', () => {
                 success: true,
                 deploy: true
             });
+            const votingBalance = (await blockchain.getContract(voting.address)).balance;
+            expect(votingBalance).toBeGreaterThanOrEqual(toNano("0.04"));
         });
     });
     it('should fail on trying to create voting with type 2', async () => {

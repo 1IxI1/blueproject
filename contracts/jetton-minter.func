@@ -16,7 +16,7 @@ const int provide_address_gas_consumption = 10000000;
 const int provide_voting_data_gas_consumption = 20000000;
 const int voting_results_init_fee = 20000000;
 const int voting_init_fee = 80000000;
-const int max_create_voting_fwd_fee = 10000000;
+const int max_create_poll_fwd_fee = 10000000;
 
 
 ;; storage scheme
@@ -247,6 +247,8 @@ int is_proposal_accepted(int voted_for, int voted_against, int total_votes) inli
         throw_unless(error::forbidden_vote_type, correct_voting_type?);
 
         if(voting_type == 0) { ;; simple execution
+            ;; by checking fwd_fee we're limiting proposal by ~2kB
+            throw_unless(error::not_enough_money, msg_value > voting_init_fee + fwd_fee);
             throw_unless(error::voting_already_finished, now() < expiration_date);
             throw_unless(error::expiration_date_too_high, now() + max_voting_duration > expiration_date);
             cell state_init = calculate_dao_voting_state_init (my_address(), voting_id, voting_code);
@@ -267,7 +269,7 @@ int is_proposal_accepted(int voted_for, int voted_against, int total_votes) inli
             send_raw_message(msg.end_cell(), CARRY_REMAINING_GAS);
         } elseif (voting_type == 1) { ;;no execution, voting results
             ;; by checking fwd_fee we're limiting proposal by ~1kB
-            throw_unless(error::proposal_too_big, fwd_fee < max_create_voting_fwd_fee);
+            throw_unless(error::proposal_too_big, fwd_fee < max_create_poll_fwd_fee);
             throw_unless(error::not_enough_money, msg_value > voting_results_init_fee + voting_init_fee + fwd_fee);
 
             slice cs  = proposal.begin_parse();

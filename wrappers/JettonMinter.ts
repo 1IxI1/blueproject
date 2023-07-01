@@ -123,11 +123,12 @@ export class JettonMinter implements Contract {
     async sendCreateSimpleMsgVoting(provider: ContractProvider, via: Sender, expiration_date: bigint,
                            minimal_execution_amount:bigint,
                            payload:Cell,
-                           description: string = "Sample description") {
+                           value?:bigint,
+                           description:string = "Sample description") {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: JettonMinter.createSimpleMsgVotingMessage(expiration_date, minimal_execution_amount, payload, description),
-            value: toNano("0.1") + minimal_execution_amount,
+            value: value ? value : toNano("0.1") + minimal_execution_amount,
         });
     }
 

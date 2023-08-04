@@ -1,4 +1,11 @@
-import { Blockchain, SandboxContract, TreasuryContract, Verbosity, internal, SendMessageResult } from '@ton-community/sandbox';
+import {
+    Blockchain,
+    SandboxContract,
+    TreasuryContract,
+    Verbosity,
+    internal,
+    SendMessageResult,
+} from '@ton-community/sandbox';
 import { Cell, toNano, beginCell, Address, SendMode, Sender, Dictionary } from 'ton-core';
 import { JettonWallet, jettonWalletConfigToCell } from '../../wrappers/JettonWallet';
 import { JettonMinter, jettonMinterConfigToCell } from '../../wrappers/JettonMinter';
@@ -6,10 +13,21 @@ import { Voting } from '../../wrappers/Voting';
 import { VoteKeeper } from '../../wrappers/VoteKeeper';
 import '@ton-community/test-utils';
 import { compile } from '@ton-community/blueprint';
-import { getRandom, getRandomExp, getRandomInt, getRandomPayload, getRandomTon, randomAddress, renewExp, ActiveWallet, ActiveJettonWallet, commonMsg } from "../utils";
+import {
+    getRandom,
+    getRandomExp,
+    getRandomInt,
+    getRandomPayload,
+    getRandomTon,
+    randomAddress,
+    renewExp,
+    ActiveWallet,
+    ActiveJettonWallet,
+    commonMsg,
+} from '../utils';
 import { JettonWalletTests } from '../../wrappers/JettonWalletTests';
-import { Op } from "../../Ops";
-import { Errors } from "../../Errors";
+import { Op } from '../../wrappers/Ops';
+import { Errors } from '../../wrappers/Errors';
 
 /*
    These tests check compliance with the TEP-74 and TEP-89,
@@ -21,24 +39,42 @@ import { Errors } from "../../Errors";
 */
 
 //jetton params
-let fwd_fee = 1804014n, gas_consumption = 11500000n, min_tons_for_storage = 10000000n, max_voting_duration = 2592000;
+let fwd_fee = 1804014n,
+    gas_consumption = 11500000n,
+    min_tons_for_storage = 10000000n,
+    max_voting_duration = 2592000;
 
-describe('JettonWallet', () => {// return;
+describe('JettonWallet', () => {
+    // return;
     jest.setTimeout(15000);
     let jwallet_code = new Cell();
     let minter_code = new Cell();
     let voting_code = new Cell();
     let vote_keeper_code = new Cell();
     let blockchain: Blockchain;
-    let deployer:SandboxContract<TreasuryContract>;
-    let notDeployer:SandboxContract<TreasuryContract>;
-    let jettonMinter:SandboxContract<JettonMinter>;
-    let userWallet: (address:Address) => Promise<ActiveJettonWallet>;
-    let testWallet: (address:Address) => Promise<SandboxContract<JettonWalletTests>>;
-    let defaultContent:Cell;
-    let votingId:bigint;
-    let assertVoteCreation:(via:Sender, jettonWallet:ActiveJettonWallet, voting:Address, votingType:bigint, expDate:bigint, prop:Cell, expErr:number) => Promise<SendMessageResult>;
-    let assertWalletVote:(via:Sender, jettonWallet:ActiveJettonWallet, keeper:Address, expDate:bigint, expErr:number) => Promise<SendMessageResult>;
+    let deployer: SandboxContract<TreasuryContract>;
+    let notDeployer: SandboxContract<TreasuryContract>;
+    let jettonMinter: SandboxContract<JettonMinter>;
+    let userWallet: (address: Address) => Promise<ActiveJettonWallet>;
+    let testWallet: (address: Address) => Promise<SandboxContract<JettonWalletTests>>;
+    let defaultContent: Cell;
+    let votingId: bigint;
+    let assertVoteCreation: (
+        via: Sender,
+        jettonWallet: ActiveJettonWallet,
+        voting: Address,
+        votingType: bigint,
+        expDate: bigint,
+        prop: Cell,
+        expErr: number
+    ) => Promise<SendMessageResult>;
+    let assertWalletVote: (
+        via: Sender,
+        jettonWallet: ActiveJettonWallet,
+        keeper: Address,
+        expDate: bigint,
+        expErr: number
+    ) => Promise<SendMessageResult>;
     const defaultVoteType = 0n;
 
     beforeAll(async () => {
@@ -58,35 +94,42 @@ describe('JettonWallet', () => {// return;
         defaultContent = beginCell().endCell();
         votingId = 0n;
         jettonMinter = blockchain.openContract(
-                   await JettonMinter.createFromConfig(
-                     {
-                       admin: deployer.address,
-                       content: defaultContent,
-                       voting_code: voting_code
-                     },
-                     minter_code));
-        userWallet = async (address:Address) => blockchain.openContract(
-                          JettonWallet.createFromAddress(
-                            await jettonMinter.getWalletAddress(address)
-                          )
-                     );
-        testWallet = async (address:Address) => blockchain.openContract(
-                          JettonWalletTests.createFromAddress(
-                            await jettonMinter.getWalletAddress(address)
-                          )
-                     );
+            await JettonMinter.createFromConfig(
+                {
+                    admin: deployer.address,
+                    content: defaultContent,
+                    voting_code: voting_code,
+                },
+                minter_code
+            )
+        );
+        userWallet = async (address: Address) =>
+            blockchain.openContract(JettonWallet.createFromAddress(await jettonMinter.getWalletAddress(address)));
+        testWallet = async (address: Address) =>
+            blockchain.openContract(JettonWalletTests.createFromAddress(await jettonMinter.getWalletAddress(address)));
 
-        assertVoteCreation = async (via:Sender, jettonWallet:ActiveJettonWallet, voting:Address, votingType:bigint, expDate:bigint, prop:Cell, expErr:number) => {
-            const minExecution   = toNano('0.5');
-            const res = await jettonWallet.sendCreateSimpleMsgVotingThroughWallet(via, expDate, minExecution, prop, votingType);
+        assertVoteCreation = async (
+            via: Sender,
+            jettonWallet: ActiveJettonWallet,
+            voting: Address,
+            votingType: bigint,
+            expDate: bigint,
+            prop: Cell,
+            expErr: number
+        ) => {
+            const minExecution = toNano('0.5');
+            const res = await jettonWallet.sendCreateSimpleMsgVotingThroughWallet(
+                via,
+                expDate,
+                minExecution,
+                prop,
+                votingType
+            );
 
             const createSimpleMsgVoting = {
                 from: jettonWallet.address,
-                on:   jettonMinter.address,
-                body: JettonMinter.createSimpleMsgVotingMessage(expDate,
-                                                       minExecution,
-                                                       prop)
-
+                on: jettonMinter.address,
+                body: JettonMinter.createSimpleMsgVotingMessage(expDate, minExecution, prop),
             };
 
             const deployVoting = {
@@ -94,24 +137,23 @@ describe('JettonWallet', () => {// return;
                 on: voting,
                 deploy: true,
                 success: true,
-                initCode: voting_code
+                initCode: voting_code,
             };
-            if(expErr == 0) {
+            if (expErr == 0) {
                 expect(res.transactions).toHaveTransaction(createSimpleMsgVoting);
                 expect(res.transactions).toHaveTransaction(deployVoting);
-            }
-            else {
+            } else {
                 expect(res.transactions).not.toHaveTransaction(createSimpleMsgVoting);
                 expect(res.transactions).not.toHaveTransaction(deployVoting);
                 expect(res.transactions).toHaveTransaction({
                     from: via.address,
                     on: jettonWallet.address,
                     success: false,
-                    exitCode: expErr
+                    exitCode: expErr,
                 });
             }
             return res;
-        }
+        };
     });
 
     // implementation detail
@@ -130,31 +172,49 @@ describe('JettonWallet', () => {// return;
         let initialTotalSupply = await jettonMinter.getTotalSupply();
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = toNano('1000.23');
-        const mintResult = await jettonMinter.sendMint(deployer.getSender(), deployer.address, initialJettonBalance, toNano('0.05'), toNano('1'));
+        const mintResult = await jettonMinter.sendMint(
+            deployer.getSender(),
+            deployer.address,
+            initialJettonBalance,
+            toNano('0.05'),
+            toNano('1')
+        );
 
         expect(mintResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployerJettonWallet.address,
             deploy: true,
         });
-        expect(mintResult.transactions).toHaveTransaction({ // excesses
+        expect(mintResult.transactions).toHaveTransaction({
+            // excesses
             from: deployerJettonWallet.address,
-            on: deployer.address
+            on: deployer.address,
         });
-
 
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply + initialJettonBalance);
         initialTotalSupply += initialJettonBalance;
         // can mint from deployer again
         let additionalJettonBalance = toNano('2.31');
-        await jettonMinter.sendMint(deployer.getSender(), deployer.address, additionalJettonBalance, toNano('0.05'), toNano('1'));
+        await jettonMinter.sendMint(
+            deployer.getSender(),
+            deployer.address,
+            additionalJettonBalance,
+            toNano('0.05'),
+            toNano('1')
+        );
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance + additionalJettonBalance);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply + additionalJettonBalance);
         initialTotalSupply += additionalJettonBalance;
         // can mint to other address
         let otherJettonBalance = toNano('3.12');
-        await jettonMinter.sendMint(deployer.getSender(), notDeployer.address, otherJettonBalance, toNano('0.05'), toNano('1'));
+        await jettonMinter.sendMint(
+            deployer.getSender(),
+            notDeployer.address,
+            otherJettonBalance,
+            toNano('0.05'),
+            toNano('1')
+        );
         const notDeployerJettonWallet = await userWallet(notDeployer.address);
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(otherJettonBalance);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply + otherJettonBalance);
@@ -165,7 +225,13 @@ describe('JettonWallet', () => {// return;
         let initialTotalSupply = await jettonMinter.getTotalSupply();
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-        const unAuthMintResult = await jettonMinter.sendMint(notDeployer.getSender(), deployer.address, toNano('777'), toNano('0.05'), toNano('1'));
+        const unAuthMintResult = await jettonMinter.sendMint(
+            notDeployer.getSender(),
+            deployer.address,
+            toNano('777'),
+            toNano('0.05'),
+            toNano('1')
+        );
 
         expect(unAuthMintResult.transactions).toHaveTransaction({
             from: notDeployer.address,
@@ -196,7 +262,7 @@ describe('JettonWallet', () => {// return;
     });
 
     it('minter admin can change content', async () => {
-        let newContent = beginCell().storeUint(1,1).endCell();
+        let newContent = beginCell().storeUint(1, 1).endCell();
         expect((await jettonMinter.getContent()).equals(defaultContent)).toBe(true);
         let changeContent = await jettonMinter.sendChangeContent(deployer.getSender(), newContent);
         expect((await jettonMinter.getContent()).equals(newContent)).toBe(true);
@@ -204,7 +270,7 @@ describe('JettonWallet', () => {// return;
         expect((await jettonMinter.getContent()).equals(defaultContent)).toBe(true);
     });
     it('not a minter admin can not change content', async () => {
-        let newContent = beginCell().storeUint(1,1).endCell();
+        let newContent = beginCell().storeUint(1, 1).endCell();
         let changeContent = await jettonMinter.sendChangeContent(notDeployer.getSender(), newContent);
         expect((await jettonMinter.getContent()).equals(defaultContent)).toBe(true);
         expect(changeContent.transactions).toHaveTransaction({
@@ -223,23 +289,31 @@ describe('JettonWallet', () => {// return;
         let initialJettonBalance2 = await notDeployerJettonWallet.getJettonBalance();
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, notDeployer.address,
-               deployer.address, null, forwardAmount, null);
-        expect(sendResult.transactions).toHaveTransaction({ //excesses
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            null
+        );
+        expect(sendResult.transactions).toHaveTransaction({
+            //excesses
             from: notDeployerJettonWallet.address,
             on: deployer.address,
         });
-        expect(sendResult.transactions).toHaveTransaction({ //notification
+        expect(sendResult.transactions).toHaveTransaction({
+            //notification
             from: notDeployerJettonWallet.address,
             on: notDeployer.address,
-            value: forwardAmount
+            value: forwardAmount,
         });
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount);
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
     });
-
 
     it('not wallet owner should not be able to send jettons', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
@@ -248,9 +322,16 @@ describe('JettonWallet', () => {// return;
         const notDeployerJettonWallet = await userWallet(notDeployer.address);
         let initialJettonBalance2 = await notDeployerJettonWallet.getJettonBalance();
         let sentAmount = toNano('0.5');
-        const sendResult = await deployerJettonWallet.sendTransfer(notDeployer.getSender(), toNano('0.15'), //tons
-               sentAmount, notDeployer.address,
-               deployer.address, null, toNano('0.05'), null);
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            notDeployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            toNano('0.05'),
+            null
+        );
         expect(sendResult.transactions).toHaveTransaction({
             from: notDeployer.address,
             on: deployerJettonWallet.address,
@@ -269,9 +350,16 @@ describe('JettonWallet', () => {// return;
         let initialJettonBalance2 = await notDeployerJettonWallet.getJettonBalance();
         let sentAmount = initialJettonBalance + 1n;
         let forwardAmount = toNano('0.05');
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, notDeployer.address,
-               deployer.address, null, forwardAmount, null);
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            null
+        );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
             on: deployerJettonWallet.address,
@@ -282,33 +370,36 @@ describe('JettonWallet', () => {// return;
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2);
     });
 
-    it('malformed forward payload', async() => {
-
-        const deployerJettonWallet    = await userWallet(deployer.address);
+    it('malformed forward payload', async () => {
+        const deployerJettonWallet = await userWallet(deployer.address);
         const notDeployerJettonWallet = await userWallet(notDeployer.address);
 
-        let sentAmount     = toNano('0.5');
-        let forwardAmount  = getRandomTon(0.01, 0.05); // toNano('0.05');
+        let sentAmount = toNano('0.5');
+        let forwardAmount = getRandomTon(0.01, 0.05); // toNano('0.05');
         let forwardPayload = beginCell().storeUint(0x1234567890abcdefn, 128).endCell();
-        let msgPayload     = beginCell().storeUint(Op.transfer, 32).storeUint(0, 64) // op, queryId
-                                        .storeCoins(sentAmount).storeAddress(notDeployer.address)
-                                        .storeAddress(deployer.address)
-                                        .storeMaybeRef(null)
-                                        .storeCoins(toNano('0.05')) // No forward payload indication
-                            .endCell();
-        const res = await blockchain.sendMessage(internal({
-                                                    from: deployer.address,
-                                                    to: deployerJettonWallet.address,
-                                                    body: msgPayload,
-                                                    value: toNano('0.2')
-                                                    }));
-
+        let msgPayload = beginCell()
+            .storeUint(Op.transfer, 32)
+            .storeUint(0, 64) // op, queryId
+            .storeCoins(sentAmount)
+            .storeAddress(notDeployer.address)
+            .storeAddress(deployer.address)
+            .storeMaybeRef(null)
+            .storeCoins(toNano('0.05')) // No forward payload indication
+            .endCell();
+        const res = await blockchain.sendMessage(
+            internal({
+                from: deployer.address,
+                to: deployerJettonWallet.address,
+                body: msgPayload,
+                value: toNano('0.2'),
+            })
+        );
 
         expect(res.transactions).toHaveTransaction({
             from: deployer.address,
             on: deployerJettonWallet.address,
             aborted: true,
-            exitCode: Errors.wallet.malformed_forward_payload
+            exitCode: Errors.wallet.malformed_forward_payload,
         });
     });
 
@@ -320,10 +411,18 @@ describe('JettonWallet', () => {// return;
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
         let forwardPayload = beginCell().storeUint(0x1234567890abcdefn, 128).endCell();
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, notDeployer.address,
-               deployer.address, null, forwardAmount, forwardPayload);
-        expect(sendResult.transactions).toHaveTransaction({ //excesses
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            forwardPayload
+        );
+        expect(sendResult.transactions).toHaveTransaction({
+            //excesses
             from: notDeployerJettonWallet.address,
             on: deployer.address,
         });
@@ -332,16 +431,19 @@ describe('JettonWallet', () => {// return;
                                       sender:MsgAddress forward_payload:(Either Cell ^Cell)
                                       = InternalMsgBody;
         */
-        expect(sendResult.transactions).toHaveTransaction({ //notification
+        expect(sendResult.transactions).toHaveTransaction({
+            //notification
             from: notDeployerJettonWallet.address,
             on: notDeployer.address,
             value: forwardAmount,
-            body: beginCell().storeUint(Op.transfer_notification, 32).storeUint(0, 64) //default queryId
-                              .storeCoins(sentAmount)
-                              .storeAddress(deployer.address)
-                              .storeUint(1, 1)
-                              .storeRef(forwardPayload)
-                  .endCell()
+            body: beginCell()
+                .storeUint(Op.transfer_notification, 32)
+                .storeUint(0, 64) //default queryId
+                .storeCoins(sentAmount)
+                .storeAddress(deployer.address)
+                .storeUint(1, 1)
+                .storeRef(forwardPayload)
+                .endCell(),
         });
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount);
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount);
@@ -355,17 +457,26 @@ describe('JettonWallet', () => {// return;
         let sentAmount = toNano('0.5');
         let forwardAmount = 0n;
         let forwardPayload = beginCell().storeUint(0x1234567890abcdefn, 128).endCell();
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, notDeployer.address,
-               deployer.address, null, forwardAmount, forwardPayload);
-        expect(sendResult.transactions).toHaveTransaction({ //excesses
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            forwardPayload
+        );
+        expect(sendResult.transactions).toHaveTransaction({
+            //excesses
             from: notDeployerJettonWallet.address,
             on: deployer.address,
         });
 
-        expect(sendResult.transactions).not.toHaveTransaction({ //no notification
+        expect(sendResult.transactions).not.toHaveTransaction({
+            //no notification
             from: notDeployerJettonWallet.address,
-            on: notDeployer.address
+            on: notDeployer.address,
         });
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount);
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount);
@@ -374,13 +485,20 @@ describe('JettonWallet', () => {// return;
     it('check revert on not enough tons for forward', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-        await deployer.send({value:toNano('1'), bounce:false, to: deployerJettonWallet.address});
+        await deployer.send({ value: toNano('1'), bounce: false, to: deployerJettonWallet.address });
         let sentAmount = toNano('0.1');
         let forwardAmount = toNano('0.3');
         let forwardPayload = beginCell().storeUint(0x1234567890abcdefn, 128).endCell();
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), forwardAmount, // not enough tons, no tons for gas
-               sentAmount, notDeployer.address,
-               deployer.address, null, forwardAmount, forwardPayload);
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            forwardAmount, // not enough tons, no tons for gas
+            sentAmount,
+            notDeployer.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            forwardPayload
+        );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
             on: deployerJettonWallet.address,
@@ -395,24 +513,31 @@ describe('JettonWallet', () => {// return;
     it('works with minimal ton amount', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-        const someAddress = Address.parse("EQD__________________________________________0vo");
+        const someAddress = Address.parse('EQD__________________________________________0vo');
         const someJettonWallet = await userWallet(someAddress);
         let initialJettonBalance2 = await someJettonWallet.getJettonBalance();
-        await deployer.send({value:toNano('1'), bounce:false, to: deployerJettonWallet.address});
+        await deployer.send({ value: toNano('1'), bounce: false, to: deployerJettonWallet.address });
         let forwardAmount = toNano('0.3');
         /*
                      forward_ton_amount +
                      fwd_count * fwd_fee +
                      (2 * gas_consumption + min_tons_for_storage));
         */
-        let minimalFee = 2n* fwd_fee + 2n*gas_consumption + min_tons_for_storage;
+        let minimalFee = 2n * fwd_fee + 2n * gas_consumption + min_tons_for_storage;
         let sentAmount = forwardAmount + minimalFee; // not enough, need >
         let forwardPayload = null;
-        let tonBalance =(await blockchain.getContract(deployerJettonWallet.address)).balance;
+        let tonBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
         let tonBalance2 = (await blockchain.getContract(someJettonWallet.address)).balance;
-        let sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), sentAmount,
-               sentAmount, someAddress,
-               deployer.address, null, forwardAmount, forwardPayload);
+        let sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            sentAmount,
+            sentAmount,
+            someAddress,
+            deployer.address,
+            null,
+            forwardAmount,
+            forwardPayload
+        );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
             on: deployerJettonWallet.address,
@@ -420,10 +545,18 @@ describe('JettonWallet', () => {// return;
             exitCode: Errors.wallet.not_enough_tons, //error::not_enough_tons
         });
         sentAmount += 1n; // now enough
-        sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), sentAmount,
-               sentAmount, someAddress,
-               deployer.address, null, forwardAmount, forwardPayload);
-        expect(sendResult.transactions).not.toHaveTransaction({ //no excesses
+        sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            sentAmount,
+            sentAmount,
+            someAddress,
+            deployer.address,
+            null,
+            forwardAmount,
+            forwardPayload
+        );
+        expect(sendResult.transactions).not.toHaveTransaction({
+            //no excesses
             from: someJettonWallet.address,
             on: deployer.address,
         });
@@ -432,20 +565,23 @@ describe('JettonWallet', () => {// return;
                                       sender:MsgAddress forward_payload:(Either Cell ^Cell)
                                       = InternalMsgBody;
         */
-        expect(sendResult.transactions).toHaveTransaction({ //notification
+        expect(sendResult.transactions).toHaveTransaction({
+            //notification
             from: someJettonWallet.address,
             on: someAddress,
             value: forwardAmount,
-            body: beginCell().storeUint(Op.transfer_notification, 32).storeUint(0, 64) //default queryId
-                              .storeCoins(sentAmount)
-                              .storeAddress(deployer.address)
-                              .storeUint(0, 1)
-                  .endCell()
+            body: beginCell()
+                .storeUint(Op.transfer_notification, 32)
+                .storeUint(0, 64) //default queryId
+                .storeCoins(sentAmount)
+                .storeAddress(deployer.address)
+                .storeUint(0, 1)
+                .endCell(),
         });
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount);
         expect(await someJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount);
 
-        tonBalance =(await blockchain.getContract(deployerJettonWallet.address)).balance;
+        tonBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
         expect((await blockchain.getContract(someJettonWallet.address)).balance).toBeGreaterThan(min_tons_for_storage);
     });
 
@@ -453,26 +589,30 @@ describe('JettonWallet', () => {// return;
     it('wallet does not accept internal_transfer not from wallet', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-/*
+        /*
   internal_transfer  query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
                      response_address:MsgAddress
                      forward_ton_amount:(VarUInteger 16)
                      forward_payload:(Either Cell ^Cell)
                      = InternalMsgBody;
 */
-        let internalTransfer = beginCell().storeUint(Op.internal_transfer, 32).storeUint(0, 64) //default queryId
-                              .storeCoins(toNano('0.01'))
-                              .storeAddress(deployer.address)
-                              .storeAddress(deployer.address)
-                              .storeCoins(toNano('0.05'))
-                              .storeUint(0, 1)
-                  .endCell();
-        const sendResult = await blockchain.sendMessage(internal({
-                    from: notDeployer.address,
-                    to: deployerJettonWallet.address,
-                    body: internalTransfer,
-                    value:toNano('0.3')
-                }));
+        let internalTransfer = beginCell()
+            .storeUint(Op.internal_transfer, 32)
+            .storeUint(0, 64) //default queryId
+            .storeCoins(toNano('0.01'))
+            .storeAddress(deployer.address)
+            .storeAddress(deployer.address)
+            .storeCoins(toNano('0.05'))
+            .storeUint(0, 1)
+            .endCell();
+        const sendResult = await blockchain.sendMessage(
+            internal({
+                from: notDeployer.address,
+                to: deployerJettonWallet.address,
+                body: internalTransfer,
+                value: toNano('0.3'),
+            })
+        );
         expect(sendResult.transactions).toHaveTransaction({
             from: notDeployer.address,
             on: deployerJettonWallet.address,
@@ -483,115 +623,146 @@ describe('JettonWallet', () => {// return;
     });
 
     it('wallet owner should be able to burn jettons', async () => {
-            const deployerJettonWallet = await userWallet(deployer.address);
-            let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-            let initialTotalSupply = await jettonMinter.getTotalSupply();
-            let burnAmount = toNano('0.01');
-            const sendResult = await deployerJettonWallet.sendBurn(deployer.getSender(), toNano('0.8'), // ton amount
-                                 burnAmount, deployer.address, null); // amount, response address, custom payload
-            expect(sendResult.transactions).toHaveTransaction({ //burn notification
-                from: deployerJettonWallet.address,
-                on: jettonMinter.address,
-                success:true
-            });
-            expect(sendResult.transactions).toHaveTransaction({ //message to admin
-                from: jettonMinter.address,
-                on: deployer.address,
-                op: Op.admin.jettons_burned
-            });
-            expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - burnAmount);
-            expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply - burnAmount);
-
+        const deployerJettonWallet = await userWallet(deployer.address);
+        let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
+        let initialTotalSupply = await jettonMinter.getTotalSupply();
+        let burnAmount = toNano('0.01');
+        const sendResult = await deployerJettonWallet.sendBurn(
+            deployer.getSender(),
+            toNano('0.8'), // ton amount
+            burnAmount,
+            deployer.address,
+            null
+        ); // amount, response address, custom payload
+        expect(sendResult.transactions).toHaveTransaction({
+            //burn notification
+            from: deployerJettonWallet.address,
+            on: jettonMinter.address,
+            success: true,
+        });
+        expect(sendResult.transactions).toHaveTransaction({
+            //message to admin
+            from: jettonMinter.address,
+            on: deployer.address,
+            op: Op.admin.jettons_burned,
+        });
+        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - burnAmount);
+        expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply - burnAmount);
     });
 
     it('wallet owner should be able to burn jettons with cusom payload', async () => {
-            const deployerJettonWallet = await userWallet(deployer.address);
-            let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-            let initialTotalSupply = await jettonMinter.getTotalSupply();
-            let burnAmount = toNano('0.01');
-            const customPaylaod = beginCell().storeCoins(getRandomTon(1000, 2000)).endCell();
-            const sendResult = await deployerJettonWallet.sendBurn(deployer.getSender(), toNano('0.1'), // ton amount
-                                 burnAmount, deployer.address, customPaylaod); // amount, response address, custom payload
-            expect(sendResult.transactions).toHaveTransaction({ //burn notification
-                from: deployerJettonWallet.address,
-                on: jettonMinter.address,
-                op: Op.burn_notification,
-                body: (x: Cell) => {
-                    if( x.refs.length == 1) {
-                        const payload = x.beginParse().preloadRef();
-                        expect(payload).toEqualCell(customPaylaod);
-                        return true;
-                    }
-                    return false;
-                },
-                success:true
-            });
-            expect(sendResult.transactions).toHaveTransaction({ //message to admin
-                from: jettonMinter.address,
-                on: deployer.address,
-                op: Op.admin.jettons_burned
-            });
-            expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - burnAmount);
-            expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply - burnAmount);
-
-
+        const deployerJettonWallet = await userWallet(deployer.address);
+        let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
+        let initialTotalSupply = await jettonMinter.getTotalSupply();
+        let burnAmount = toNano('0.01');
+        const customPaylaod = beginCell().storeCoins(getRandomTon(1000, 2000)).endCell();
+        const sendResult = await deployerJettonWallet.sendBurn(
+            deployer.getSender(),
+            toNano('0.1'), // ton amount
+            burnAmount,
+            deployer.address,
+            customPaylaod
+        ); // amount, response address, custom payload
+        expect(sendResult.transactions).toHaveTransaction({
+            //burn notification
+            from: deployerJettonWallet.address,
+            on: jettonMinter.address,
+            op: Op.burn_notification,
+            body: (x: Cell) => {
+                if (x.refs.length == 1) {
+                    const payload = x.beginParse().preloadRef();
+                    expect(payload).toEqualCell(customPaylaod);
+                    return true;
+                }
+                return false;
+            },
+            success: true,
+        });
+        expect(sendResult.transactions).toHaveTransaction({
+            //message to admin
+            from: jettonMinter.address,
+            on: deployer.address,
+            op: Op.admin.jettons_burned,
+        });
+        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - burnAmount);
+        expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply - burnAmount);
     });
 
     it('not wallet owner should not be able to burn jettons', async () => {
-              const deployerJettonWallet = await userWallet(deployer.address);
-              let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-              let initialTotalSupply = await jettonMinter.getTotalSupply();
-              let burnAmount = toNano('0.01');
-              const sendResult = await deployerJettonWallet.sendBurn(notDeployer.getSender(), toNano('0.1'), // ton amount
-                                    burnAmount, deployer.address, null); // amount, response address, custom payload
-              expect(sendResult.transactions).toHaveTransaction({
-                 from: notDeployer.address,
-                 on: deployerJettonWallet.address,
-                 aborted: true,
-                 exitCode: Errors.wallet.unauthorized_transfer, //error::unauthorized_transfer
-                });
-              expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance);
-              expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
+        const deployerJettonWallet = await userWallet(deployer.address);
+        let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
+        let initialTotalSupply = await jettonMinter.getTotalSupply();
+        let burnAmount = toNano('0.01');
+        const sendResult = await deployerJettonWallet.sendBurn(
+            notDeployer.getSender(),
+            toNano('0.1'), // ton amount
+            burnAmount,
+            deployer.address,
+            null
+        ); // amount, response address, custom payload
+        expect(sendResult.transactions).toHaveTransaction({
+            from: notDeployer.address,
+            on: deployerJettonWallet.address,
+            aborted: true,
+            exitCode: Errors.wallet.unauthorized_transfer, //error::unauthorized_transfer
+        });
+        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance);
+        expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
     });
 
     it('wallet owner can not burn more jettons than it has', async () => {
-                const deployerJettonWallet = await userWallet(deployer.address);
-                let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
-                let initialTotalSupply = await jettonMinter.getTotalSupply();
-                let burnAmount = initialJettonBalance + 1n;
-                const sendResult = await deployerJettonWallet.sendBurn(deployer.getSender(), toNano('0.1'), // ton amount
-                                        burnAmount, deployer.address, null); // amount, response address, custom payload
-                expect(sendResult.transactions).toHaveTransaction({
-                     from: deployer.address,
-                     on: deployerJettonWallet.address,
-                     aborted: true,
-                     exitCode: Errors.wallet.not_enough_jettons, //error::not_enough_jettons
-                    });
-                expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance);
-                expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
+        const deployerJettonWallet = await userWallet(deployer.address);
+        let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
+        let initialTotalSupply = await jettonMinter.getTotalSupply();
+        let burnAmount = initialJettonBalance + 1n;
+        const sendResult = await deployerJettonWallet.sendBurn(
+            deployer.getSender(),
+            toNano('0.1'), // ton amount
+            burnAmount,
+            deployer.address,
+            null
+        ); // amount, response address, custom payload
+        expect(sendResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            on: deployerJettonWallet.address,
+            aborted: true,
+            exitCode: Errors.wallet.not_enough_jettons, //error::not_enough_jettons
+        });
+        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance);
+        expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply);
     });
 
     it('minimal burn message fee', async () => {
-       const deployerJettonWallet = await userWallet(deployer.address);
-       let initialJettonBalance   = await deployerJettonWallet.getJettonBalance();
-       let initialTotalSupply     = await jettonMinter.getTotalSupply();
-       let burnAmount   = toNano('0.01');
-       let fwd_fee      = 1492012n /*1500012n*/ ;//, gas_consumption = 19000000n;
-       let baseFee = toNano('0.75');
-       let minimalFee   = baseFee + fwd_fee + 2n*gas_consumption;
+        const deployerJettonWallet = await userWallet(deployer.address);
+        let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
+        let initialTotalSupply = await jettonMinter.getTotalSupply();
+        let burnAmount = toNano('0.01');
+        let fwd_fee = 1492012n; /*1500012n*/ //, gas_consumption = 19000000n;
+        let baseFee = toNano('0.75');
+        let minimalFee = baseFee + fwd_fee + 2n * gas_consumption;
 
-       const sendLow    = await deployerJettonWallet.sendBurn(deployer.getSender(), minimalFee, // ton amount
-                            burnAmount, deployer.address, null); // amount, response address, custom payload
+        const sendLow = await deployerJettonWallet.sendBurn(
+            deployer.getSender(),
+            minimalFee, // ton amount
+            burnAmount,
+            deployer.address,
+            null
+        ); // amount, response address, custom payload
 
-       expect(sendLow.transactions).toHaveTransaction({
-                from: deployer.address,
-                on: deployerJettonWallet.address,
-                aborted: true,
-                exitCode: Errors.wallet.burn_fee_not_matched, //error::burn_fee_not_matched
-             });
+        expect(sendLow.transactions).toHaveTransaction({
+            from: deployer.address,
+            on: deployerJettonWallet.address,
+            aborted: true,
+            exitCode: Errors.wallet.burn_fee_not_matched, //error::burn_fee_not_matched
+        });
 
-        const sendExcess = await deployerJettonWallet.sendBurn(deployer.getSender(), minimalFee + 1n,
-                                                                      burnAmount, deployer.address, null);
+        const sendExcess = await deployerJettonWallet.sendBurn(
+            deployer.getSender(),
+            minimalFee + 1n,
+            burnAmount,
+            deployer.address,
+            null
+        );
 
         /*expect(sendExcess.transactions).toHaveTransaction({
             from: deployer.address,
@@ -601,50 +772,53 @@ describe('JettonWallet', () => {// return;
 
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - burnAmount);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply - burnAmount);
-
     });
 
     it('minter should only accept burn messages from jetton wallets', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
         const burnAmount = toNano('1');
         const burnNotification = (amount: bigint, addr: Address) => {
-        return beginCell()
+            return beginCell()
                 .storeUint(Op.burn_notification, 32)
                 .storeUint(0, 64)
                 .storeCoins(amount)
                 .storeAddress(addr)
                 .storeAddress(deployer.address)
                 .storeInt(0n, 1) // no custom_payloadn
-               .endCell();
-        }
+                .endCell();
+        };
 
-        let res = await blockchain.sendMessage(internal({
-            from: deployerJettonWallet.address,
-            to: jettonMinter.address,
-            body: burnNotification(burnAmount, randomAddress(0)),
-            value: toNano('0.1')
-        }));
+        let res = await blockchain.sendMessage(
+            internal({
+                from: deployerJettonWallet.address,
+                to: jettonMinter.address,
+                body: burnNotification(burnAmount, randomAddress(0)),
+                value: toNano('0.1'),
+            })
+        );
 
         expect(res.transactions).toHaveTransaction({
             from: deployerJettonWallet.address,
             on: jettonMinter.address,
             aborted: true,
-            exitCode: Errors.minter.unauthorized_burn_request// Unauthorized burn
+            exitCode: Errors.minter.unauthorized_burn_request, // Unauthorized burn
         });
 
-        res = await blockchain.sendMessage(internal({
-            from: deployerJettonWallet.address,
-            to: jettonMinter.address,
-            body: burnNotification(burnAmount, deployer.address),
-            value: toNano('0.1')
-        }));
+        res = await blockchain.sendMessage(
+            internal({
+                from: deployerJettonWallet.address,
+                to: jettonMinter.address,
+                body: burnNotification(burnAmount, deployer.address),
+                value: toNano('0.1'),
+            })
+        );
 
         expect(res.transactions).toHaveTransaction({
             from: deployerJettonWallet.address,
             on: jettonMinter.address,
-            success: true
+            success: true,
         });
-   });
+    });
 
     // TEP-89
     it('report correct discovery address', async () => {
@@ -656,11 +830,13 @@ describe('JettonWallet', () => {// return;
         expect(discoveryResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployer.address,
-            body: beginCell().storeUint(Op.minter.take_wallet_address, 32).storeUint(0, 64)
-                              .storeAddress(deployerJettonWallet.address)
-                              .storeUint(1, 1)
-                              .storeRef(beginCell().storeAddress(deployer.address).endCell())
-                  .endCell()
+            body: beginCell()
+                .storeUint(Op.minter.take_wallet_address, 32)
+                .storeUint(0, 64)
+                .storeAddress(deployerJettonWallet.address)
+                .storeUint(1, 1)
+                .storeRef(beginCell().storeAddress(deployer.address).endCell())
+                .endCell(),
         });
 
         discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(), notDeployer.address, true);
@@ -668,11 +844,13 @@ describe('JettonWallet', () => {// return;
         expect(discoveryResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployer.address,
-            body: beginCell().storeUint(Op.minter.take_wallet_address, 32).storeUint(0, 64)
-                              .storeAddress(notDeployerJettonWallet.address)
-                              .storeUint(1, 1)
-                              .storeRef(beginCell().storeAddress(notDeployer.address).endCell())
-                  .endCell()
+            body: beginCell()
+                .storeUint(Op.minter.take_wallet_address, 32)
+                .storeUint(0, 64)
+                .storeAddress(notDeployerJettonWallet.address)
+                .storeUint(1, 1)
+                .storeRef(beginCell().storeAddress(notDeployer.address).endCell())
+                .endCell(),
         });
 
         // do not include owner address
@@ -680,29 +858,32 @@ describe('JettonWallet', () => {// return;
         expect(discoveryResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployer.address,
-            body: beginCell().storeUint(Op.minter.take_wallet_address, 32).storeUint(0, 64)
-                              .storeAddress(notDeployerJettonWallet.address)
-                              .storeUint(0, 1)
-                  .endCell()
+            body: beginCell()
+                .storeUint(Op.minter.take_wallet_address, 32)
+                .storeUint(0, 64)
+                .storeAddress(notDeployerJettonWallet.address)
+                .storeUint(0, 1)
+                .endCell(),
         });
-
     });
 
     it('Minimal discovery fee', async () => {
-       // 5000 gas-units + msg_forward_prices.lump_price + msg_forward_prices.cell_price = 0.0061
-        const fwdFee     = 1464012n;
+        // 5000 gas-units + msg_forward_prices.lump_price + msg_forward_prices.cell_price = 0.0061
+        const fwdFee = 1464012n;
         const minimalFee = fwdFee + 10000000n; // toNano('0.0061');
 
-        let discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(),
-                                                                      notDeployer.address,
-                                                                      false,
-                                                                      minimalFee);
+        let discoveryResult = await jettonMinter.sendDiscovery(
+            deployer.getSender(),
+            notDeployer.address,
+            false,
+            minimalFee
+        );
 
         expect(discoveryResult.transactions).toHaveTransaction({
             from: deployer.address,
             on: jettonMinter.address,
             aborted: true,
-            exitCode: Errors.minter.discovery_fee_not_matched // discovery_fee_not_matched
+            exitCode: Errors.minter.discovery_fee_not_matched, // discovery_fee_not_matched
         });
 
         /*
@@ -715,50 +896,49 @@ describe('JettonWallet', () => {// return;
          * expect(discoveryResult.hasTransaction({such and such}) ||
          * discoveryResult.hasTransaction({yada yada})).toBeTruethy()
          */
-        discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(),
-                                                           notDeployer.address,
-                                                           false,
-                                                           minimalFee + 1n);
+        discoveryResult = await jettonMinter.sendDiscovery(
+            deployer.getSender(),
+            notDeployer.address,
+            false,
+            minimalFee + 1n
+        );
 
         expect(discoveryResult.transactions).toHaveTransaction({
             from: deployer.address,
             on: jettonMinter.address,
-            success: true
+            success: true,
         });
-
     });
 
-    it('Correctly handles not valid address in discovery', async () =>{
-        const badAddr       = randomAddress(-1);
-        let discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(),
-                                                               badAddr,
-                                                               false);
+    it('Correctly handles not valid address in discovery', async () => {
+        const badAddr = randomAddress(-1);
+        let discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(), badAddr, false);
 
         expect(discoveryResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployer.address,
-            body: beginCell().storeUint(Op.minter.take_wallet_address, 32).storeUint(0, 64)
-                             .storeUint(0, 2) // addr_none
-                             .storeUint(0, 1)
-                  .endCell()
-
+            body: beginCell()
+                .storeUint(Op.minter.take_wallet_address, 32)
+                .storeUint(0, 64)
+                .storeUint(0, 2) // addr_none
+                .storeUint(0, 1)
+                .endCell(),
         });
 
         // Include address should still be available
 
-        discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(),
-                                                           badAddr,
-                                                           true); // Include addr
+        discoveryResult = await jettonMinter.sendDiscovery(deployer.getSender(), badAddr, true); // Include addr
 
         expect(discoveryResult.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: deployer.address,
-            body: beginCell().storeUint(Op.minter.take_wallet_address, 32).storeUint(0, 64)
-                             .storeUint(0, 2) // addr_none
-                             .storeUint(1, 1)
-                             .storeRef(beginCell().storeAddress(badAddr).endCell())
-                  .endCell()
-
+            body: beginCell()
+                .storeUint(Op.minter.take_wallet_address, 32)
+                .storeUint(0, 64)
+                .storeUint(0, 2) // addr_none
+                .storeUint(1, 1)
+                .storeRef(beginCell().storeAddress(badAddr).endCell())
+                .endCell(),
         });
     });
     // This test consume a lot of time: 18 sec
@@ -768,42 +948,57 @@ describe('JettonWallet', () => {// return;
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
         const notDeployerJettonWallet = await userWallet(notDeployer.address);
         let initialJettonBalance2 = await notDeployerJettonWallet.getJettonBalance();
-        let sentAmount = 1n, count = 250n;
+        let sentAmount = 1n,
+            count = 250n;
         let forwardAmount = toNano('0.05');
         let sendResult: any;
         let payload = beginCell()
-                          .storeUint(0x12345678, 32).storeUint(0x87654321, 32)
-                          .storeRef(beginCell().storeUint(0x12345678, 32).storeUint(0x87654321, 108).endCell())
-                          .storeRef(beginCell().storeUint(0x12345671, 32).storeUint(0x87654321, 240).endCell())
-                          .storeRef(beginCell().storeUint(0x12345672, 32).storeUint(0x87654321, 77)
-                                               .storeRef(beginCell().endCell())
-                                               .storeRef(beginCell().storeUint(0x1245671, 91).storeUint(0x87654321, 32).endCell())
-                                               .storeRef(beginCell().storeUint(0x2245671, 180).storeUint(0x87654321, 32).endCell())
-                                               .storeRef(beginCell().storeUint(0x8245671, 255).storeUint(0x87654321, 32).endCell())
-                                    .endCell())
-                      .endCell();
-        let initialBalance =(await blockchain.getContract(deployerJettonWallet.address)).balance;
+            .storeUint(0x12345678, 32)
+            .storeUint(0x87654321, 32)
+            .storeRef(beginCell().storeUint(0x12345678, 32).storeUint(0x87654321, 108).endCell())
+            .storeRef(beginCell().storeUint(0x12345671, 32).storeUint(0x87654321, 240).endCell())
+            .storeRef(
+                beginCell()
+                    .storeUint(0x12345672, 32)
+                    .storeUint(0x87654321, 77)
+                    .storeRef(beginCell().endCell())
+                    .storeRef(beginCell().storeUint(0x1245671, 91).storeUint(0x87654321, 32).endCell())
+                    .storeRef(beginCell().storeUint(0x2245671, 180).storeUint(0x87654321, 32).endCell())
+                    .storeRef(beginCell().storeUint(0x8245671, 255).storeUint(0x87654321, 32).endCell())
+                    .endCell()
+            )
+            .endCell();
+        let initialBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
         let initialBalance2 = (await blockchain.getContract(notDeployerJettonWallet.address)).balance;
-        for(let i = 0; i < count; i++) {
-            sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-                   sentAmount, notDeployer.address,
-                   deployer.address, null, forwardAmount, payload);
+        for (let i = 0; i < count; i++) {
+            sendResult = await deployerJettonWallet.sendTransfer(
+                deployer.getSender(),
+                toNano('0.15'), //tons
+                sentAmount,
+                notDeployer.address,
+                deployer.address,
+                null,
+                forwardAmount,
+                payload
+            );
         }
         // last chain was successful
-        expect(sendResult.transactions).toHaveTransaction({ //excesses
+        expect(sendResult.transactions).toHaveTransaction({
+            //excesses
             from: notDeployerJettonWallet.address,
             on: deployer.address,
         });
-        expect(sendResult.transactions).toHaveTransaction({ //notification
+        expect(sendResult.transactions).toHaveTransaction({
+            //notification
             from: notDeployerJettonWallet.address,
             on: notDeployer.address,
-            value: forwardAmount
+            value: forwardAmount,
         });
 
-        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount*count);
-        expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount*count);
+        expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance - sentAmount * count);
+        expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance2 + sentAmount * count);
 
-        let finalBalance =(await blockchain.getContract(deployerJettonWallet.address)).balance;
+        let finalBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
         let finalBalance2 = (await blockchain.getContract(notDeployerJettonWallet.address)).balance;
 
         // if it is not true, it's ok but gas_consumption constant is too high
@@ -812,7 +1007,6 @@ describe('JettonWallet', () => {// return;
         expect(finalBalance2).toBeLessThan(initialBalance2 + toNano('0.001'));
         expect(finalBalance).toBeGreaterThan(initialBalance - toNano('0.001'));
         expect(finalBalance2).toBeGreaterThan(initialBalance2 - toNano('0.001'));
-
     });
 
     // implementation detail
@@ -820,26 +1014,35 @@ describe('JettonWallet', () => {// return;
         const deployerJettonWallet = await userWallet(deployer.address);
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
-        const sendResult = await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, Address.parse("Ef8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAU"),
-               deployer.address, null, forwardAmount, null);
-        expect(sendResult.transactions).toHaveTransaction({ //excesses
+        const sendResult = await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            Address.parse('Ef8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAU'),
+            deployer.address,
+            null,
+            forwardAmount,
+            null
+        );
+        expect(sendResult.transactions).toHaveTransaction({
+            //excesses
             from: deployer.address,
             on: deployerJettonWallet.address,
             aborted: true,
-            exitCode: Errors.wrong_workchain //error::wrong_workchain
+            exitCode: Errors.wrong_workchain, //error::wrong_workchain
         });
     });
 
     // implementation detail
     it('owner can withdraw excesses', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
-        await deployer.send({value:toNano('1'), bounce:false, to: deployerJettonWallet.address});
+        await deployer.send({ value: toNano('1'), bounce: false, to: deployerJettonWallet.address });
         let initialBalance = (await blockchain.getContract(deployer.address)).balance;
         const withdrawResult = await deployerJettonWallet.sendWithdrawTons(deployer.getSender());
-        expect(withdrawResult.transactions).toHaveTransaction({ //excesses
+        expect(withdrawResult.transactions).toHaveTransaction({
+            //excesses
             from: deployerJettonWallet.address,
-            on: deployer.address
+            on: deployer.address,
         });
         let finalBalance = (await blockchain.getContract(deployer.address)).balance;
         let finalWalletBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
@@ -849,12 +1052,13 @@ describe('JettonWallet', () => {// return;
     // implementation detail
     it('not owner can not withdraw excesses', async () => {
         const deployerJettonWallet = await userWallet(deployer.address);
-        await deployer.send({value:toNano('1'), bounce:false, to: deployerJettonWallet.address});
+        await deployer.send({ value: toNano('1'), bounce: false, to: deployerJettonWallet.address });
         let initialBalance = (await blockchain.getContract(deployer.address)).balance;
         const withdrawResult = await deployerJettonWallet.sendWithdrawTons(notDeployer.getSender());
-        expect(withdrawResult.transactions).not.toHaveTransaction({ //excesses
+        expect(withdrawResult.transactions).not.toHaveTransaction({
+            //excesses
             from: deployerJettonWallet.address,
-            on: deployer.address
+            on: deployer.address,
         });
         let finalBalance = (await blockchain.getContract(deployer.address)).balance;
         let finalWalletBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
@@ -866,15 +1070,26 @@ describe('JettonWallet', () => {// return;
         const deployerJettonWallet = await userWallet(deployer.address);
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
-        await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, deployerJettonWallet.address,
-               deployer.address, null, forwardAmount, null);
+        await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            deployerJettonWallet.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            null
+        );
         const childJettonWallet = await userWallet(deployerJettonWallet.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
         let initialChildJettonBalance = await childJettonWallet.getJettonBalance();
         expect(initialChildJettonBalance).toEqual(toNano('0.5'));
-        let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(deployer.getSender(), childJettonWallet.address, toNano('0.4'));
-        expect(await deployerJettonWallet.getJettonBalance() - initialJettonBalance).toEqual(toNano('0.4'));
+        let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(
+            deployer.getSender(),
+            childJettonWallet.address,
+            toNano('0.4')
+        );
+        expect((await deployerJettonWallet.getJettonBalance()) - initialJettonBalance).toEqual(toNano('0.4'));
         expect(await childJettonWallet.getJettonBalance()).toEqual(toNano('0.1'));
         //withdraw the rest
         await deployerJettonWallet.sendWithdrawJettons(deployer.getSender(), childJettonWallet.address, toNano('0.1'));
@@ -884,86 +1099,156 @@ describe('JettonWallet', () => {// return;
         const deployerJettonWallet = await userWallet(deployer.address);
         let sentAmount = toNano('0.5');
         let forwardAmount = toNano('0.05');
-        await deployerJettonWallet.sendTransfer(deployer.getSender(), toNano('0.15'), //tons
-               sentAmount, deployerJettonWallet.address,
-               deployer.address, null, forwardAmount, null);
+        await deployerJettonWallet.sendTransfer(
+            deployer.getSender(),
+            toNano('0.15'), //tons
+            sentAmount,
+            deployerJettonWallet.address,
+            deployer.address,
+            null,
+            forwardAmount,
+            null
+        );
         const childJettonWallet = await userWallet(deployerJettonWallet.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
         let initialChildJettonBalance = await childJettonWallet.getJettonBalance();
         expect(initialChildJettonBalance).toEqual(toNano('0.5'));
-        let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(notDeployer.getSender(), childJettonWallet.address, toNano('0.4'));
-        expect(await deployerJettonWallet.getJettonBalance() - initialJettonBalance).toEqual(toNano('0.0'));
+        let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(
+            notDeployer.getSender(),
+            childJettonWallet.address,
+            toNano('0.4')
+        );
+        expect((await deployerJettonWallet.getJettonBalance()) - initialJettonBalance).toEqual(toNano('0.0'));
         expect(await childJettonWallet.getJettonBalance()).toEqual(toNano('0.5'));
     });
 
-    it('owner should be able to create voting via jetton wallet', async() => {
-        const peasantWallet  = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
+    it('owner should be able to create voting via jetton wallet', async () => {
+        const peasantWallet = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
         const expirationDate = getRandomExp();
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId);
-        await assertVoteCreation(notDeployer.getSender(), peasantWallet, votingAddress, defaultVoteType, expirationDate, prop, 0);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId);
+        await assertVoteCreation(
+            notDeployer.getSender(),
+            peasantWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            0
+        );
         votingId++;
     });
 
     it('owner should be able to create vote type 1 via jetton wallet', async () => {
-        const peasantWallet  = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
+        const peasantWallet = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
         const expirationDate = getRandomExp();
-        const prop           = beginCell().storeAddress(randomAddress()).endCell();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId);
-        const votingType     = 1n;
-        await assertVoteCreation(notDeployer.getSender(), peasantWallet, votingAddress, votingType, expirationDate, prop, 0);
+        const prop = beginCell().storeAddress(randomAddress()).endCell();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId);
+        const votingType = 1n;
+        await assertVoteCreation(
+            notDeployer.getSender(),
+            peasantWallet,
+            votingAddress,
+            votingType,
+            expirationDate,
+            prop,
+            0
+        );
         votingId++;
     });
 
     it('not owner should not be able to create voting via jetton wallet', async () => {
-        const jettonWallet  = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
+        const jettonWallet = await userWallet(notDeployer.address); // make sure deployer status has nothing to do wiht success
         const expirationDate = getRandomExp();
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId);
-        await assertVoteCreation(deployer.getSender(), jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, Errors.wallet.unauthorized_vote_submition);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId);
+        await assertVoteCreation(
+            deployer.getSender(),
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            Errors.wallet.unauthorized_vote_submition
+        );
     });
 
-    it('should not be possible to create voting for too long', async() => {
+    it('should not be possible to create voting for too long', async () => {
+        blockchain.now = Math.floor(Date.now() / 1000); // stop ticking please
+        const jettonWallet = await userWallet(notDeployer.address);
+        let expirationDate = BigInt(blockchain.now + max_voting_duration);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId);
+        const userSender = notDeployer.getSender();
 
-        blockchain.now       = Math.floor(Date.now() / 1000); // stop ticking please
-        const jettonWallet   = await userWallet(notDeployer.address);
-        let   expirationDate = BigInt(blockchain.now + max_voting_duration);
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId);
-        const userSender     = notDeployer.getSender();
-
-        await assertVoteCreation(userSender, jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, Errors.voting.expiration_date_too_high);
+        await assertVoteCreation(
+            userSender,
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            Errors.voting.expiration_date_too_high
+        );
 
         // Verifying edge case works
-        await assertVoteCreation(userSender, jettonWallet, votingAddress, defaultVoteType, expirationDate - 1n, prop, 0);
+        await assertVoteCreation(
+            userSender,
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate - 1n,
+            prop,
+            0
+        );
         votingId++;
-
     });
 
-    it('should not be possible to create voting with expirationDate <= now()', async() => {
+    it('should not be possible to create voting with expirationDate <= now()', async () => {
+        blockchain.now = Math.floor(Date.now() / 1000); // stop ticking please
+        const jettonWallet = await userWallet(notDeployer.address);
+        let expirationDate = BigInt(blockchain.now);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId);
+        const userSender = notDeployer.getSender();
 
-        blockchain.now       = Math.floor(Date.now() / 1000); // stop ticking please
-        const jettonWallet   = await userWallet(notDeployer.address);
-        let   expirationDate = BigInt(blockchain.now);
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId);
-        const userSender     = notDeployer.getSender();
-
-        await assertVoteCreation(userSender, jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, Errors.voting.voting_already_finished);
+        await assertVoteCreation(
+            userSender,
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            Errors.voting.voting_already_finished
+        );
 
         // Verifying edge case works
-        await assertVoteCreation(userSender, jettonWallet, votingAddress, defaultVoteType, expirationDate + 1n, prop, 0);
+        await assertVoteCreation(
+            userSender,
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate + 1n,
+            prop,
+            0
+        );
         votingId++;
-
     });
 
     it('not owner should not be able to vote', async () => {
-
-        const jettonWallet   = await userWallet(notDeployer.address);
+        const jettonWallet = await userWallet(notDeployer.address);
         const expirationDate = getRandomExp();
-        const prop           = getRandomPayload();
+        const prop = getRandomPayload();
         const votingAddress = await jettonMinter.getVotingAddress(votingId++);
-        let   res    = await assertVoteCreation(notDeployer.getSender(), jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, 0);
+        let res = await assertVoteCreation(
+            notDeployer.getSender(),
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            0
+        );
         const keeper = await jettonWallet.getVoteKeeperAddress(votingAddress);
 
         res = await jettonWallet.sendVote(deployer.getSender(), votingAddress, expirationDate, true, false);
@@ -971,88 +1256,100 @@ describe('JettonWallet', () => {// return;
         expect(res.transactions).toHaveTransaction({
             from: deployer.address,
             on: jettonWallet.address,
-            success:false,
-            exitCode: Errors.wallet.unauthorized_vote_submition
+            success: false,
+            exitCode: Errors.wallet.unauthorized_vote_submition,
         });
         expect(res.transactions).not.toHaveTransaction({
             from: jettonWallet.address,
-            on: keeper
+            on: keeper,
         });
-    })
+    });
 
     it('it should not be possible to vote with expiration date > max', async () => {
-
-        blockchain.now       = Math.floor(Date.now() / 1000); // stop ticking please
-        const jettonWallet   = await userWallet(notDeployer.address);
-        let   expirationDate = getRandomExp(blockchain.now);
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId++);
-        const keeper         = await jettonWallet.getVoteKeeperAddress(votingAddress);
-        let   res            = await assertVoteCreation(notDeployer.getSender(), jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, 0);
-        expirationDate       = BigInt(blockchain.now + max_voting_duration);
+        blockchain.now = Math.floor(Date.now() / 1000); // stop ticking please
+        const jettonWallet = await userWallet(notDeployer.address);
+        let expirationDate = getRandomExp(blockchain.now);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId++);
+        const keeper = await jettonWallet.getVoteKeeperAddress(votingAddress);
+        let res = await assertVoteCreation(
+            notDeployer.getSender(),
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            0
+        );
+        expirationDate = BigInt(blockchain.now + max_voting_duration);
 
         res = await jettonWallet.sendVote(notDeployer.getSender(), votingAddress, expirationDate, true, false);
-
 
         expect(res.transactions).toHaveTransaction({
             from: notDeployer.address,
             on: jettonWallet.address,
-            success:false,
-            exitCode: Errors.voting.expiration_date_too_high
+            success: false,
+            exitCode: Errors.voting.expiration_date_too_high,
         });
         expect(res.transactions).not.toHaveTransaction({
             from: jettonWallet.address,
-            on: keeper
+            on: keeper,
         });
         // Test edge case works
         res = await jettonWallet.sendVote(notDeployer.getSender(), votingAddress, expirationDate - 1n, true, false);
         expect(res.transactions).not.toHaveTransaction({
             from: notDeployer.address,
             on: jettonWallet.address,
-            success:false,
-            exitCode: Errors.voting.expiration_date_too_high
+            success: false,
+            exitCode: Errors.voting.expiration_date_too_high,
         });
         expect(res.transactions).toHaveTransaction({
             from: jettonWallet.address,
-            on: keeper
+            on: keeper,
         });
- 
-    })
+    });
 
     it('it should not be possible to vote with expiration date <= now()', async () => {
-
-        blockchain.now       = Math.floor(Date.now() / 1000); // stop ticking please
-        const jettonWallet   = await userWallet(notDeployer.address);
-        let   expirationDate = getRandomExp(blockchain.now);
-        const prop           = getRandomPayload();
-        const votingAddress  = await jettonMinter.getVotingAddress(votingId++);
-        let   res            = await assertVoteCreation(notDeployer.getSender(), jettonWallet, votingAddress, defaultVoteType, expirationDate, prop, 0);
-        const keeper         = await jettonWallet.getVoteKeeperAddress(votingAddress);
-        expirationDate       = BigInt(blockchain.now);
+        blockchain.now = Math.floor(Date.now() / 1000); // stop ticking please
+        const jettonWallet = await userWallet(notDeployer.address);
+        let expirationDate = getRandomExp(blockchain.now);
+        const prop = getRandomPayload();
+        const votingAddress = await jettonMinter.getVotingAddress(votingId++);
+        let res = await assertVoteCreation(
+            notDeployer.getSender(),
+            jettonWallet,
+            votingAddress,
+            defaultVoteType,
+            expirationDate,
+            prop,
+            0
+        );
+        const keeper = await jettonWallet.getVoteKeeperAddress(votingAddress);
+        expirationDate = BigInt(blockchain.now);
 
         res = await jettonWallet.sendVote(notDeployer.getSender(), votingAddress, expirationDate, true, false);
 
         expect(res.transactions).toHaveTransaction({
             from: notDeployer.address,
             on: jettonWallet.address,
-            success:false,
-            exitCode: Errors.voting.voting_already_finished
+            success: false,
+            exitCode: Errors.voting.voting_already_finished,
         });
         expect(res.transactions).not.toHaveTransaction({
             from: jettonWallet.address,
-            on: keeper
+            on: keeper,
         });
         // Test edge case works
         res = await jettonWallet.sendVote(notDeployer.getSender(), votingAddress, expirationDate + 1n, true, false);
         expect(res.transactions).not.toHaveTransaction({
             from: notDeployer.address,
             on: jettonWallet.address,
-            success:false,
-            exitCode: Errors.voting.voting_already_finished
+            success: false,
+            exitCode: Errors.voting.voting_already_finished,
         });
         expect(res.transactions).toHaveTransaction({
             from: jettonWallet.address,
-            on: keeper
+            on: keeper,
         });
     });
 
@@ -1063,25 +1360,23 @@ describe('JettonWallet', () => {// return;
             from: notDeployer.address,
             on: jettonWallet.address,
             success: false,
-            exitCode: Errors.wallet.unauthorized_vote_submition
+            exitCode: Errors.wallet.unauthorized_vote_submition,
         });
 
         res = await jettonWallet.sendConfirmVote(blockchain.sender(jettonMinter.address));
         expect(res.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: jettonWallet.address,
-            success: true
+            success: true,
         });
         expect(res.transactions).not.toHaveTransaction({
             from: notDeployer.address,
             on: jettonWallet.address,
             success: false,
-            exitCode: Errors.wallet.unauthorized_vote_submition
+            exitCode: Errors.wallet.unauthorized_vote_submition,
         });
-
-
     });
- 
+
     it('Voting creation notification should only be allowed from minter', async () => {
         const jettonWallet = await testWallet(notDeployer.address);
         const voting = randomAddress();
@@ -1090,7 +1385,7 @@ describe('JettonWallet', () => {// return;
             from: notDeployer.address,
             on: jettonWallet.address,
             success: false,
-            exitCode: Errors.wallet.unauthorized_vote_submition
+            exitCode: Errors.wallet.unauthorized_vote_submition,
         });
 
         res = await jettonWallet.sendVotingCreated(blockchain.sender(jettonMinter.address), randomAddress());
@@ -1098,18 +1393,13 @@ describe('JettonWallet', () => {// return;
             from: jettonMinter.address,
             on: jettonWallet.address,
             success: false,
-            exitCode: Errors.wallet.unauthorized_vote_submition
+            exitCode: Errors.wallet.unauthorized_vote_submition,
         });
-
 
         expect(res.transactions).toHaveTransaction({
             from: jettonMinter.address,
             on: jettonWallet.address,
-            success: true
+            success: true,
         });
     });
- 
 });
-
-
-

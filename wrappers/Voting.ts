@@ -1,10 +1,19 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from 'ton-core';
-import { Op } from "../Ops";
-
+import {
+    Address,
+    beginCell,
+    Cell,
+    Contract,
+    contractAddress,
+    ContractProvider,
+    Sender,
+    SendMode,
+    toNano,
+} from 'ton-core';
+import { Op } from './Ops';
 
 export type VotingConfig = {
-    master: Address,
-    voting_id: bigint
+    master: Address;
+    voting_id: bigint;
 };
 
 export class Voting implements Contract {
@@ -17,25 +26,25 @@ export class Voting implements Contract {
         return new Voting(address);
     }
 
-    static createFromConfig(conf:VotingConfig, code:Cell, workchain = 0) {
+    static createFromConfig(conf: VotingConfig, code: Cell, workchain = 0) {
         const data = Voting.votingConfigToCell(conf);
-        const init = {code, data};
+        const init = { code, data };
         return new Voting(contractAddress(workchain, init), init);
     }
 
-    static endVotingMessage(query_id:bigint = 0n) {
+    static endVotingMessage(query_id: bigint = 0n) {
         return beginCell().storeUint(Op.voting.end_voting, 32).storeUint(query_id, 64).endCell();
     }
 
-    async sendEndVoting(provider: ContractProvider, via: Sender, value:bigint=toNano('0.5')) {
+    async sendEndVoting(provider: ContractProvider, via: Sender, value: bigint = toNano('0.5')) {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: Voting.endVotingMessage(),
-            value
+            value,
         });
     }
 
-/*
+    /*
     return (init, executed,
             dao_address, initiator,
             voting_id, expiration_date, voting_type,
@@ -58,14 +67,21 @@ export class Voting implements Contract {
         let votedFor = res.stack.readBigNumber();
         let votedAgainst = res.stack.readBigNumber();
         return {
-            init, executed,
-            daoAddress, initiator,
-            votingId, expirationDate, votingType,
-            minAmount, message, description,
-            votedFor, votedAgainst,
+            init,
+            executed,
+            daoAddress,
+            initiator,
+            votingId,
+            expirationDate,
+            votingType,
+            minAmount,
+            message,
+            description,
+            votedFor,
+            votedAgainst,
         };
     }
-/*
+    /*
 (init, dao_address, voting_id, expiration_date, voting_type,
             proposal, wallet_code,
             voted_for, voted_against,
@@ -98,20 +114,20 @@ export class Voting implements Contract {
             initiator,
         };
     }
-    static createSendMsgProposalBody(minimal_execution_amount:bigint, forwardMsg:Cell, description: string = "Sample description") {
+    static createSendMsgProposalBody(
+        minimal_execution_amount: bigint,
+        forwardMsg: Cell,
+        description: string = 'Sample description'
+    ) {
         return beginCell()
-                .storeCoins(minimal_execution_amount)
-                .storeMaybeRef(forwardMsg)
-                .storeStringTail(description)
-               .endCell();
+            .storeCoins(minimal_execution_amount)
+            .storeMaybeRef(forwardMsg)
+            .storeStringTail(description)
+            .endCell();
     }
 
-    static createPollProposal(voting_duration: bigint | number, body: Cell | string = "Sample description") {
-        if (typeof body === "string")
-          body = beginCell().storeStringTail(body).endCell();
-        return beginCell()
-                .storeUint(voting_duration, 48)
-                .storeRef(body)
-               .endCell();
+    static createPollProposal(voting_duration: bigint | number, body: Cell | string = 'Sample description') {
+        if (typeof body === 'string') body = beginCell().storeStringTail(body).endCell();
+        return beginCell().storeUint(voting_duration, 48).storeRef(body).endCell();
     }
 }

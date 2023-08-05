@@ -127,8 +127,8 @@ function BodyRoot(props: BodyRootProps) {
 	}, [wrappers]);
 
 	const preloadWrappers = useCallback(async () => {
-		// cache it to refetch on switching from get to send.
-		// because not all wrappers have get methods and there is a filter below in useEffect.
+		// cache it to refetch on switching from get to send or versa.
+		// because some wrappers may not have get or send methods.
 		const [parsedWrappers, parsedConfig] = await loadWrappersFromJSON();
 		return { parsedWrappers, parsedConfig };
 	}, []);
@@ -137,13 +137,12 @@ function BodyRoot(props: BodyRootProps) {
 		async function loadWrappers() {
 			const { parsedWrappers, parsedConfig } = await preloadWrappers();
 			var _wrappers = parsedWrappers;
-			if (props.areGetMethods)
-				// filter wrappers with get methods
-				for (const _wrapper in parsedWrappers) {
-					if (Object.keys(parsedWrappers[_wrapper]['getFunctions']).length === 0) {
-						delete _wrappers[_wrapper];
-					}
+			// filter wrappers with selected methods
+			for (const _wrapper in parsedWrappers) {
+				if (Object.keys(parsedWrappers[_wrapper][methods()]).length === 0) {
+					delete _wrappers[_wrapper];
 				}
+			}
 			setWrappers(_wrappers);
 			setWrappersConfig(parsedConfig);
 

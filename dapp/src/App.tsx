@@ -29,15 +29,37 @@ function App() {
 			},
 		});
 
-		const url = new URL(window.location.href.replace(process.env.PUBLIC_URL || '', ''));
-		const pathParts = url.pathname.split('/').filter((part) => part !== '');
+		const origUrl = new URL(window.location.href);
 
-		const [providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
+		let base = process.env.PUBLIC_URL || origUrl.origin;
+
+		if (!base.includes(origUrl.origin)) {
+			base = origUrl.origin + base;
+		}
+
+		const urlStringNoBase = window.location.href.replace(base, origUrl.origin);
+		const urlToParse = new URL(urlStringNoBase);
+		const pathParts = urlToParse.pathname.split('/').filter((part) => part !== '');
+
+		let providedWrapperFromPath: string | undefined;
+		let providedMethodFromPath: string | undefined;
+		let providedAddressFromPath: string | undefined;
+		if (pathParts.length > 0) {
+			[providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
+		} else {
+			const params = new URLSearchParams(urlToParse.search);
+			if ((providedWrapperFromPath = params.get('wrapper') || undefined)) {
+				if ((providedMethodFromPath = params.get('method') || undefined)) {
+					providedAddressFromPath = params.get('address') || undefined;
+				}
+			}
+		}
 		setPathParams({
 			wrapper: providedWrapperFromPath,
 			method: providedMethodFromPath,
 			address: providedAddressFromPath,
 		});
+
 		if (providedMethodFromPath?.startsWith('get')) setIsGetMethods(true);
 	}, []);
 

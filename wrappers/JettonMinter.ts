@@ -214,11 +214,7 @@ export class JettonMinter implements Contract {
         via: Sender,
         minter_code: Cell | null,
         voting_code: Cell | null,
-        value: bigint = toNano('0.1'),
-        testBool: boolean = false,
-        testNum: bigint | number = 0n,
-        testString: string = 'Sample string',
-        testNumFree: number
+        value: bigint = toNano('0.1')
     ) {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,

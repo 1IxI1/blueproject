@@ -28,8 +28,10 @@ function App() {
 				},
 			},
 		});
-		const url = new URL(window.location.href);
+
+		const url = new URL(window.location.href.replace(process.env.PUBLIC_URL || '', ''));
 		const pathParts = url.pathname.split('/').filter((part) => part !== '');
+
 		const [providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
 		setPathParams({
 			wrapper: providedWrapperFromPath,

@@ -58,7 +58,7 @@
         },
         "description": {
           "type": "string",
-          "defaultValue": "\"Sample description\""
+          "defaultValue": "'Sample description'"
         }
       },
       "sendCreatePollVoting": {
@@ -67,11 +67,11 @@
         },
         "body": {
           "type": "string | Cell",
-          "defaultValue": "\"Sample description\""
+          "defaultValue": "'Sample description'"
         },
         "value": {
           "type": "bigint",
-          "defaultValue": "toNano(\"0.2\")"
+          "defaultValue": "toNano('0.2')"
         }
       },
       "sendCodeUpgrade": {
@@ -84,21 +84,6 @@
         "value": {
           "type": "bigint",
           "defaultValue": "toNano('0.1')"
-        },
-        "testBool": {
-          "type": "boolean",
-          "defaultValue": "false"
-        },
-        "testNum": {
-          "type": "bigint | number",
-          "defaultValue": "0n"
-        },
-        "testString": {
-          "type": "string",
-          "defaultValue": "\"Sample string\""
-        },
-        "testNumFree": {
-          "type": "number"
         }
       }
     },
@@ -232,7 +217,7 @@
         },
         "description": {
           "type": "string",
-          "defaultValue": "\"Sample description\""
+          "defaultValue": "'Sample description'"
         }
       }
     },

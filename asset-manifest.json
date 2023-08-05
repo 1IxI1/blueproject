@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "https://1ixi1.github.io/blueproject-dapp/static/css/main.dd9a19e1.css",
+    "main.js": "https://1ixi1.github.io/blueproject-dapp/static/js/main.6af73476.js",
+    "index.html": "https://1ixi1.github.io/blueproject-dapp/index.html",
+    "main.dd9a19e1.css.map": "https://1ixi1.github.io/blueproject-dapp/static/css/main.dd9a19e1.css.map",
+    "main.6af73476.js.map": "https://1ixi1.github.io/blueproject-dapp/static/js/main.6af73476.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dd9a19e1.css",
+    "static/js/main.6af73476.js"
+  ]
+}

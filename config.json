@@ -1,0 +1,433 @@
+{
+  "JettonMinter": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendDeploy": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendMint": {
+        "tabName": "",
+        "params": {
+          "to": {
+            "fieldTitle": ""
+          },
+          "jetton_amount": {
+            "fieldTitle": "",
+            "overrideWithDefault": true
+          },
+          "forward_ton_amount": {
+            "fieldTitle": ""
+          },
+          "total_ton_amount": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendDiscovery": {
+        "tabName": "",
+        "params": {
+          "owner": {
+            "fieldTitle": ""
+          },
+          "include_address": {
+            "fieldTitle": ""
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "sendChangeAdmin": {
+        "tabName": "",
+        "params": {
+          "newOwner": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendChangeContent": {
+        "tabName": "",
+        "params": {
+          "content": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendCreateSimpleMsgVoting": {
+        "tabName": "",
+        "params": {
+          "expiration_date": {
+            "fieldTitle": ""
+          },
+          "minimal_execution_amount": {
+            "fieldTitle": ""
+          },
+          "payload": {
+            "fieldTitle": ""
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "description": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "sendCreatePollVoting": {
+        "tabName": "",
+        "params": {
+          "duration": {
+            "fieldTitle": ""
+          },
+          "body": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "sendCodeUpgrade": {
+        "tabName": "",
+        "params": {
+          "minter_code": {
+            "fieldTitle": ""
+          },
+          "voting_code": {
+            "fieldTitle": ""
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "testBool": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "testNum": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "testString": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "testNumFree": {
+            "fieldTitle": ""
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getWalletAddress": {
+        "tabName": "",
+        "params": {
+          "owner": {
+            "fieldTitle": ""
+          }
+        },
+        "outNames": []
+      },
+      "getJettonData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getTotalSupply": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getAdminAddress": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getContent": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getVotingAddress": {
+        "tabName": "",
+        "params": {
+          "voting_id": {
+            "fieldTitle": ""
+          }
+        },
+        "outNames": []
+      },
+      "getVotingCode": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      }
+    }
+  },
+  "JettonWallet": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendDeploy": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendTransfer": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": ""
+          },
+          "jetton_amount": {
+            "fieldTitle": ""
+          },
+          "to": {
+            "fieldTitle": ""
+          },
+          "responseAddress": {
+            "fieldTitle": ""
+          },
+          "customPayload": {
+            "fieldTitle": ""
+          },
+          "forward_ton_amount": {
+            "fieldTitle": ""
+          },
+          "forwardPayload": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendBurn": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": ""
+          },
+          "jetton_amount": {
+            "fieldTitle": ""
+          },
+          "responseAddress": {
+            "fieldTitle": ""
+          },
+          "customPayload": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendWithdrawTons": {
+        "tabName": "",
+        "params": {}
+      },
+      "sendWithdrawJettons": {
+        "tabName": "",
+        "params": {
+          "from": {
+            "fieldTitle": ""
+          },
+          "amount": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "sendVote": {
+        "tabName": "",
+        "params": {
+          "voting_address": {
+            "fieldTitle": ""
+          },
+          "expiration_date": {
+            "fieldTitle": ""
+          },
+          "vote": {
+            "fieldTitle": ""
+          },
+          "need_confirmation": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "sendCreateSimpleMsgVotingThroughWallet": {
+        "tabName": "",
+        "params": {
+          "expiration_date": {
+            "fieldTitle": ""
+          },
+          "minimal_execution": {
+            "fieldTitle": ""
+          },
+          "proposal": {
+            "fieldTitle": ""
+          },
+          "voting_type": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "query_id": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "description": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getJettonBalance": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getVotedWeight": {
+        "tabName": "",
+        "params": {
+          "voting_id": {
+            "fieldTitle": ""
+          },
+          "expiration_date": {
+            "fieldTitle": ""
+          }
+        },
+        "outNames": []
+      },
+      "getVoteKeeperAddress": {
+        "tabName": "",
+        "params": {
+          "voting_address": {
+            "fieldTitle": ""
+          }
+        },
+        "outNames": []
+      },
+      "getJettonData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getDaoData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getLockedBalance": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getTotalBalance": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      }
+    }
+  },
+  "VoteKeeper": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {},
+    "getFunctions": {
+      "getData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      }
+    }
+  },
+  "Voting": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendEndVoting": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      },
+      "getFullData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      }
+    }
+  },
+  "VotingResults": {
+    "defaultAddress": "",
+    "tabName": "",
+    "sendFunctions": {
+      "sendVoteResult": {
+        "tabName": "",
+        "params": {
+          "votingId": {
+            "fieldTitle": ""
+          },
+          "votedFor": {
+            "fieldTitle": ""
+          },
+          "votedAgainst": {
+            "fieldTitle": ""
+          },
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "query_id": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "sendProvideVoteResult": {
+        "tabName": "",
+        "params": {
+          "value": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          },
+          "query_id": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      }
+    },
+    "getFunctions": {
+      "getData": {
+        "tabName": "",
+        "params": {},
+        "outNames": []
+      }
+    }
+  }
+}

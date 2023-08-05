@@ -7,7 +7,6 @@ import BodyRoot from './BodyRoot';
 import NetworkBadge from './components/NetBadge';
 import Switch from './components/Switch';
 import { getTheme, sendTheme } from './utils/theme';
-import { appName } from './state/appName';
 import { THEME, useTonConnectUI } from '@tonconnect/ui-react';
 
 function App() {
@@ -70,7 +69,7 @@ function App() {
 				<Box minHeight="90vh">
 					<Box fontFamily="Inter" bg="#F7F9FB">
 						<Flex>
-							<AppTitle title={appName} />
+							<AppTitle title={process.env.REACT_APP_TITLE || 'Blueprint Dapp'} />
 							<Spacer />
 							<Flex alignItems="center" mt="-6">
 								{!!!pathParams?.method && <Switch setToParent={setIsGetMethods} />}

@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "https://1ixi1.github.io/blueproject/static/css/main.c5951c8f.css",
-    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.3328eb78.js",
+    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.51c43169.js",
     "index.html": "https://1ixi1.github.io/blueproject/index.html",
     "main.c5951c8f.css.map": "https://1ixi1.github.io/blueproject/static/css/main.c5951c8f.css.map",
-    "main.3328eb78.js.map": "https://1ixi1.github.io/blueproject/static/js/main.3328eb78.js.map"
+    "main.51c43169.js.map": "https://1ixi1.github.io/blueproject/static/js/main.51c43169.js.map"
   },
   "entrypoints": [
     "static/css/main.c5951c8f.css",
-    "static/js/main.3328eb78.js"
+    "static/js/main.51c43169.js"
   ]
 }

@@ -71,8 +71,8 @@ export class JettonMinter implements Contract {
         via: Sender,
         to: Address,
         jetton_amount: bigint,
-        forward_ton_amount: bigint,
-        total_ton_amount: bigint
+        forward_ton_amount: bigint = toNano('0.05'),
+        total_ton_amount: bigint = toNano('0.1')
     ) {
         await provider.internal(via, {
             sendMode: SendMode.PAY_GAS_SEPARATELY,

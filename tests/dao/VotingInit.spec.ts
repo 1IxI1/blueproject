@@ -1,8 +1,8 @@
-import { compile } from '@ton-community/blueprint';
-import { Blockchain, SandboxContract } from '@ton-community/sandbox';
-import { Address, Cell, ContractProvider } from 'ton-core';
+import { compile } from '@ton/blueprint';
+import { Blockchain, SandboxContract } from '@ton/sandbox';
+import { Address, Cell, ContractProvider } from '@ton/core';
 import { Voting } from '../../wrappers/Voting';
-import '@ton-community/test-utils';
+import '@ton/test-utils';
 import { ActiveWallet, getRandomExp, getRandomInt, getRandomPayload, randomAddress } from '../utils';
 import { VotingTests } from '../../wrappers/VotingTests';
 import { JettonMinterTests } from '../../wrappers/JettonMinterTests';
@@ -32,7 +32,7 @@ describe('Voting init unit tests', () => {
 
         votingContract = async (voting_id: bigint) =>
             await blockchain.openContract(
-                VotingTests.createFromConfig({ master: master.address, voting_id }, voting_code)
+                VotingTests.createFromConfig({ master: master.address, voting_id }, voting_code),
             );
     });
 
@@ -45,7 +45,7 @@ describe('Voting init unit tests', () => {
             expirationDate,
             votingType,
             proposal,
-            userWallet.address
+            userWallet.address,
         );
         expect(res.transactions).toHaveTransaction({
             from: master.address,
@@ -76,7 +76,7 @@ describe('Voting init unit tests', () => {
             expirationDate,
             votingType,
             proposal,
-            userWallet.address
+            userWallet.address,
         );
         expect(res.transactions).toHaveTransaction({
             from: master.address,
@@ -93,7 +93,7 @@ describe('Voting init unit tests', () => {
             expirationDate + delta,
             votingType + delta,
             proposal,
-            userWallet.address
+            userWallet.address,
         );
 
         expect(res.transactions).toHaveTransaction({
@@ -119,7 +119,7 @@ describe('Voting init unit tests', () => {
             expirationDate,
             votingType,
             proposal,
-            userWallet.address
+            userWallet.address,
         );
 
         expect(res.transactions).toHaveTransaction({

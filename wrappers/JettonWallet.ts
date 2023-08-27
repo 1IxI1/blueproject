@@ -9,7 +9,7 @@ import {
     SendMode,
     toNano,
     TupleReader,
-} from 'ton-core';
+} from '@ton/core';
 import { Op } from './Ops';
 import { Voting } from './Voting';
 

@@ -8,7 +8,7 @@ import {
     Sender,
     SendMode,
     toNano,
-} from 'ton-core';
+} from '@ton/core';
 import { Op } from './Ops';
 
 export type VotingConfig = {

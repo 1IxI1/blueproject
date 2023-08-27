@@ -1,4 +1,14 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from 'ton-core';
+import {
+    Address,
+    beginCell,
+    Cell,
+    Contract,
+    contractAddress,
+    ContractProvider,
+    Sender,
+    SendMode,
+    toNano,
+} from '@ton/core';
 
 export class VoteKeeper implements Contract {
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
@@ -6,7 +16,7 @@ export class VoteKeeper implements Contract {
     static createFromAddress(address: Address) {
         return new VoteKeeper(address);
     }
-/*
+    /*
 (voter_wallet, voting, votes)
 */
     async getData(provider: ContractProvider) {
@@ -17,8 +27,11 @@ export class VoteKeeper implements Contract {
         let votesAgainst = res.stack.readBigNumber();
         let totalVotes = votesFor + votesAgainst;
         return {
-            voter_wallet, voting, totalVotes, votesFor, votesAgainst
+            voter_wallet,
+            voting,
+            totalVotes,
+            votesFor,
+            votesAgainst,
         };
     }
-
 }

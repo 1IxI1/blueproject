@@ -2,7 +2,7 @@ import { Box, Button, Center, Fade, Flex, Input, Tab, TabList, Tabs, useDisclosu
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionCard, ParamsWithValue } from 'src/components/ActionCard';
 import { Executor } from 'src/genTxByWrapper';
-import { Address } from 'ton-core';
+import { Address } from '@ton/core';
 import { WrappersConfig, WrappersData } from 'src/utils/wrappersConfigTypes';
 import './fade.scss';
 import './tabs.scss';
@@ -174,17 +174,24 @@ function BodyRoot(props: BodyRootProps) {
 	}, [props.areGetMethods]);
 
 	useEffect(() => {
+		// try to set config address, if fail, try
+		// provided with address=EQaddr, if fail, try
+		// set provided with WrapperName=EQaddr
 		if (wrappers && wrappersConfig) {
 			try {
 				setConfigAddress(Address.parse(wrappersConfig[wrapper]['defaultAddress']));
-			} catch (e) {
+			} catch {
 				const url = new URL(window.location.href);
 				const searchParams = url.searchParams;
 				const providedAddress = searchParams.get(wrapper);
 				try {
-					setConfigAddress(Address.parse(providedAddress || ''));
-				} catch (e) {
-					setConfigAddress(null);
+					setConfigAddress(Address.parse(props.addressFromUrl || ''));
+				} catch {
+					try {
+						setConfigAddress(Address.parse(providedAddress || ''));
+					} catch {
+						setConfigAddress(null);
+					}
 				}
 			}
 		}
@@ -236,6 +243,7 @@ function BodyRoot(props: BodyRootProps) {
 			params,
 		] as const;
 
+		console.log(configAddress?.toString() || Address.parse(destAddr));
 		if (isGet) return await executor.get(...executeParams);
 
 		await executor.send(...executeParams);

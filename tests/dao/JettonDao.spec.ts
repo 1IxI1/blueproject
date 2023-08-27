@@ -1,11 +1,4 @@
-import {
-    Blockchain,
-    SandboxContract,
-    TreasuryContract,
-    Verbosity,
-    internal,
-    printTransactionFees,
-} from '@ton-community/sandbox';
+import { Blockchain, SandboxContract, TreasuryContract, Verbosity, internal, printTransactionFees } from '@ton/sandbox';
 import {
     Cell,
     toNano,
@@ -17,15 +10,15 @@ import {
     OpenedContract,
     AccountStorage,
     Dictionary,
-} from 'ton-core';
+} from '@ton/core';
 import { JettonWallet } from '../../wrappers/JettonWallet';
 import { JettonMinter } from '../../wrappers/JettonMinter';
 import { JettonMinterTests } from '../../wrappers/JettonMinterTests';
 import { Voting } from '../../wrappers/Voting';
 import { VotingResults } from '../../wrappers/VotingResults';
 import { VoteKeeper } from '../../wrappers/VoteKeeper';
-import '@ton-community/test-utils';
-import { compile } from '@ton-community/blueprint';
+import '@ton/test-utils';
+import { compile } from '@ton/blueprint';
 import {
     assertVoteChain,
     differentAddress,

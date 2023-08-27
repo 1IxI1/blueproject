@@ -1,18 +1,11 @@
-import {
-    Blockchain,
-    SandboxContract,
-    TreasuryContract,
-    Verbosity,
-    internal,
-    SendMessageResult,
-} from '@ton-community/sandbox';
-import { Cell, toNano, beginCell, Address, SendMode, Sender, Dictionary } from 'ton-core';
+import { Blockchain, SandboxContract, TreasuryContract, Verbosity, internal, SendMessageResult } from '@ton/sandbox';
+import { Cell, toNano, beginCell, Address, SendMode, Sender, Dictionary } from '@ton/core';
 import { JettonWallet, jettonWalletConfigToCell } from '../../wrappers/JettonWallet';
 import { JettonMinter, jettonMinterConfigToCell } from '../../wrappers/JettonMinter';
 import { Voting } from '../../wrappers/Voting';
 import { VoteKeeper } from '../../wrappers/VoteKeeper';
-import '@ton-community/test-utils';
-import { compile } from '@ton-community/blueprint';
+import '@ton/test-utils';
+import { compile } from '@ton/blueprint';
 import {
     getRandom,
     getRandomExp,
@@ -66,14 +59,14 @@ describe('JettonWallet', () => {
         votingType: bigint,
         expDate: bigint,
         prop: Cell,
-        expErr: number
+        expErr: number,
     ) => Promise<SendMessageResult>;
     let assertWalletVote: (
         via: Sender,
         jettonWallet: ActiveJettonWallet,
         keeper: Address,
         expDate: bigint,
-        expErr: number
+        expErr: number,
     ) => Promise<SendMessageResult>;
     const defaultVoteType = 0n;
 
@@ -100,8 +93,8 @@ describe('JettonWallet', () => {
                     content: defaultContent,
                     voting_code: voting_code,
                 },
-                minter_code
-            )
+                minter_code,
+            ),
         );
         userWallet = async (address: Address) =>
             blockchain.openContract(JettonWallet.createFromAddress(await jettonMinter.getWalletAddress(address)));
@@ -115,7 +108,7 @@ describe('JettonWallet', () => {
             votingType: bigint,
             expDate: bigint,
             prop: Cell,
-            expErr: number
+            expErr: number,
         ) => {
             const minExecution = toNano('0.5');
             const res = await jettonWallet.sendCreateSimpleMsgVotingThroughWallet(
@@ -123,7 +116,7 @@ describe('JettonWallet', () => {
                 expDate,
                 minExecution,
                 prop,
-                votingType
+                votingType,
             );
 
             const createSimpleMsgVoting = {
@@ -177,7 +170,7 @@ describe('JettonWallet', () => {
             deployer.address,
             initialJettonBalance,
             toNano('0.05'),
-            toNano('1')
+            toNano('1'),
         );
 
         expect(mintResult.transactions).toHaveTransaction({
@@ -201,7 +194,7 @@ describe('JettonWallet', () => {
             deployer.address,
             additionalJettonBalance,
             toNano('0.05'),
-            toNano('1')
+            toNano('1'),
         );
         expect(await deployerJettonWallet.getJettonBalance()).toEqual(initialJettonBalance + additionalJettonBalance);
         expect(await jettonMinter.getTotalSupply()).toEqual(initialTotalSupply + additionalJettonBalance);
@@ -213,7 +206,7 @@ describe('JettonWallet', () => {
             notDeployer.address,
             otherJettonBalance,
             toNano('0.05'),
-            toNano('1')
+            toNano('1'),
         );
         const notDeployerJettonWallet = await userWallet(notDeployer.address);
         expect(await notDeployerJettonWallet.getJettonBalance()).toEqual(otherJettonBalance);
@@ -230,7 +223,7 @@ describe('JettonWallet', () => {
             deployer.address,
             toNano('777'),
             toNano('0.05'),
-            toNano('1')
+            toNano('1'),
         );
 
         expect(unAuthMintResult.transactions).toHaveTransaction({
@@ -297,7 +290,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            null
+            null,
         );
         expect(sendResult.transactions).toHaveTransaction({
             //excesses
@@ -330,7 +323,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             toNano('0.05'),
-            null
+            null,
         );
         expect(sendResult.transactions).toHaveTransaction({
             from: notDeployer.address,
@@ -358,7 +351,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            null
+            null,
         );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
@@ -392,7 +385,7 @@ describe('JettonWallet', () => {
                 to: deployerJettonWallet.address,
                 body: msgPayload,
                 value: toNano('0.2'),
-            })
+            }),
         );
 
         expect(res.transactions).toHaveTransaction({
@@ -419,7 +412,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            forwardPayload
+            forwardPayload,
         );
         expect(sendResult.transactions).toHaveTransaction({
             //excesses
@@ -465,7 +458,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            forwardPayload
+            forwardPayload,
         );
         expect(sendResult.transactions).toHaveTransaction({
             //excesses
@@ -497,7 +490,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            forwardPayload
+            forwardPayload,
         );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
@@ -536,7 +529,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            forwardPayload
+            forwardPayload,
         );
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
@@ -553,7 +546,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            forwardPayload
+            forwardPayload,
         );
         expect(sendResult.transactions).not.toHaveTransaction({
             //no excesses
@@ -611,7 +604,7 @@ describe('JettonWallet', () => {
                 to: deployerJettonWallet.address,
                 body: internalTransfer,
                 value: toNano('0.3'),
-            })
+            }),
         );
         expect(sendResult.transactions).toHaveTransaction({
             from: notDeployer.address,
@@ -632,7 +625,7 @@ describe('JettonWallet', () => {
             toNano('0.8'), // ton amount
             burnAmount,
             deployer.address,
-            null
+            null,
         ); // amount, response address, custom payload
         expect(sendResult.transactions).toHaveTransaction({
             //burn notification
@@ -661,7 +654,7 @@ describe('JettonWallet', () => {
             toNano('0.1'), // ton amount
             burnAmount,
             deployer.address,
-            customPaylaod
+            customPaylaod,
         ); // amount, response address, custom payload
         expect(sendResult.transactions).toHaveTransaction({
             //burn notification
@@ -698,7 +691,7 @@ describe('JettonWallet', () => {
             toNano('0.1'), // ton amount
             burnAmount,
             deployer.address,
-            null
+            null,
         ); // amount, response address, custom payload
         expect(sendResult.transactions).toHaveTransaction({
             from: notDeployer.address,
@@ -720,7 +713,7 @@ describe('JettonWallet', () => {
             toNano('0.1'), // ton amount
             burnAmount,
             deployer.address,
-            null
+            null,
         ); // amount, response address, custom payload
         expect(sendResult.transactions).toHaveTransaction({
             from: deployer.address,
@@ -746,7 +739,7 @@ describe('JettonWallet', () => {
             minimalFee, // ton amount
             burnAmount,
             deployer.address,
-            null
+            null,
         ); // amount, response address, custom payload
 
         expect(sendLow.transactions).toHaveTransaction({
@@ -761,7 +754,7 @@ describe('JettonWallet', () => {
             minimalFee + 1n,
             burnAmount,
             deployer.address,
-            null
+            null,
         );
 
         /*expect(sendExcess.transactions).toHaveTransaction({
@@ -794,7 +787,7 @@ describe('JettonWallet', () => {
                 to: jettonMinter.address,
                 body: burnNotification(burnAmount, randomAddress(0)),
                 value: toNano('0.1'),
-            })
+            }),
         );
 
         expect(res.transactions).toHaveTransaction({
@@ -810,7 +803,7 @@ describe('JettonWallet', () => {
                 to: jettonMinter.address,
                 body: burnNotification(burnAmount, deployer.address),
                 value: toNano('0.1'),
-            })
+            }),
         );
 
         expect(res.transactions).toHaveTransaction({
@@ -876,7 +869,7 @@ describe('JettonWallet', () => {
             deployer.getSender(),
             notDeployer.address,
             false,
-            minimalFee
+            minimalFee,
         );
 
         expect(discoveryResult.transactions).toHaveTransaction({
@@ -900,7 +893,7 @@ describe('JettonWallet', () => {
             deployer.getSender(),
             notDeployer.address,
             false,
-            minimalFee + 1n
+            minimalFee + 1n,
         );
 
         expect(discoveryResult.transactions).toHaveTransaction({
@@ -965,7 +958,7 @@ describe('JettonWallet', () => {
                     .storeRef(beginCell().storeUint(0x1245671, 91).storeUint(0x87654321, 32).endCell())
                     .storeRef(beginCell().storeUint(0x2245671, 180).storeUint(0x87654321, 32).endCell())
                     .storeRef(beginCell().storeUint(0x8245671, 255).storeUint(0x87654321, 32).endCell())
-                    .endCell()
+                    .endCell(),
             )
             .endCell();
         let initialBalance = (await blockchain.getContract(deployerJettonWallet.address)).balance;
@@ -979,7 +972,7 @@ describe('JettonWallet', () => {
                 deployer.address,
                 null,
                 forwardAmount,
-                payload
+                payload,
             );
         }
         // last chain was successful
@@ -1022,7 +1015,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            null
+            null,
         );
         expect(sendResult.transactions).toHaveTransaction({
             //excesses
@@ -1078,7 +1071,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            null
+            null,
         );
         const childJettonWallet = await userWallet(deployerJettonWallet.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
@@ -1087,7 +1080,7 @@ describe('JettonWallet', () => {
         let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(
             deployer.getSender(),
             childJettonWallet.address,
-            toNano('0.4')
+            toNano('0.4'),
         );
         expect((await deployerJettonWallet.getJettonBalance()) - initialJettonBalance).toEqual(toNano('0.4'));
         expect(await childJettonWallet.getJettonBalance()).toEqual(toNano('0.1'));
@@ -1107,7 +1100,7 @@ describe('JettonWallet', () => {
             deployer.address,
             null,
             forwardAmount,
-            null
+            null,
         );
         const childJettonWallet = await userWallet(deployerJettonWallet.address);
         let initialJettonBalance = await deployerJettonWallet.getJettonBalance();
@@ -1116,7 +1109,7 @@ describe('JettonWallet', () => {
         let withdrawResult = await deployerJettonWallet.sendWithdrawJettons(
             notDeployer.getSender(),
             childJettonWallet.address,
-            toNano('0.4')
+            toNano('0.4'),
         );
         expect((await deployerJettonWallet.getJettonBalance()) - initialJettonBalance).toEqual(toNano('0.0'));
         expect(await childJettonWallet.getJettonBalance()).toEqual(toNano('0.5'));
@@ -1134,7 +1127,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            0
+            0,
         );
         votingId++;
     });
@@ -1152,7 +1145,7 @@ describe('JettonWallet', () => {
             votingType,
             expirationDate,
             prop,
-            0
+            0,
         );
         votingId++;
     });
@@ -1169,7 +1162,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            Errors.wallet.unauthorized_vote_submition
+            Errors.wallet.unauthorized_vote_submition,
         );
     });
 
@@ -1188,7 +1181,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            Errors.voting.expiration_date_too_high
+            Errors.voting.expiration_date_too_high,
         );
 
         // Verifying edge case works
@@ -1199,7 +1192,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate - 1n,
             prop,
-            0
+            0,
         );
         votingId++;
     });
@@ -1219,7 +1212,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            Errors.voting.voting_already_finished
+            Errors.voting.voting_already_finished,
         );
 
         // Verifying edge case works
@@ -1230,7 +1223,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate + 1n,
             prop,
-            0
+            0,
         );
         votingId++;
     });
@@ -1247,7 +1240,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            0
+            0,
         );
         const keeper = await jettonWallet.getVoteKeeperAddress(votingAddress);
 
@@ -1279,7 +1272,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            0
+            0,
         );
         expirationDate = BigInt(blockchain.now + max_voting_duration);
 
@@ -1322,7 +1315,7 @@ describe('JettonWallet', () => {
             defaultVoteType,
             expirationDate,
             prop,
-            0
+            0,
         );
         const keeper = await jettonWallet.getVoteKeeperAddress(votingAddress);
         expirationDate = BigInt(blockchain.now);

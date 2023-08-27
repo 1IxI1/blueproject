@@ -1,7 +1,7 @@
-import { CompilerConfig } from '@ton-community/blueprint';
+import { CompilerConfig } from '@ton/blueprint';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
-import { compile as compileFunc } from '@ton-community/blueprint';
+import { compile as compileFunc } from '@ton/blueprint';
 
 export const compile: CompilerConfig = {
     lang: 'func',
@@ -9,6 +9,9 @@ export const compile: CompilerConfig = {
     postCompileHook: async (code) => {
         const auto = path.join(__dirname, '..', 'contracts', 'auto');
         await mkdir(auto, { recursive: true });
-        await writeFile(path.join(auto, 'voting-results-code.func'), `cell voting_results_code() asm "B{${code.toBoc().toString('hex')}} B>boc PUSHREF";`);
-    }
+        await writeFile(
+            path.join(auto, 'voting-results-code.func'),
+            `cell voting_results_code() asm "B{${code.toBoc().toString('hex')}} B>boc PUSHREF";`
+        );
+    },
 };

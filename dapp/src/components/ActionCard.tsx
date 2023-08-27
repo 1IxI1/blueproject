@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Address, Builder, Cell, Slice } from 'ton-core';
+import { Address, Builder, Cell, Slice } from '@ton/core';
 import { Parameters, ParamInfo, DeployData, MethodConfig, GetMethodConfig } from 'src/utils/wrappersConfigTypes';
 import {
 	AddressField,
@@ -159,7 +159,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	}, []);
 
 	const isInactive = () => {
-		console.log(correctParams.length, Object.keys(enteredParams).length);
 		if (correctParams.length !== Object.keys(enteredParams).length) return true;
 		if (!isGet && !wallet) return true;
 		return false;

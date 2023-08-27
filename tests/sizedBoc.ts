@@ -1,4 +1,4 @@
-import { Cell, beginCell } from "ton-core";
+import { Cell, beginCell } from "@ton/core";
 
 const minBoc = beginCell().endCell().toBoc();
 const minRef = beginCell().storeRef(Cell.EMPTY).endCell().toBoc();

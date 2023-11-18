@@ -18,11 +18,12 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "@ton/blueprint": "^0.12.1",
-        "@ton/core": "^0.51.0",
+        "@ton/blueprint": "^0.13.0",
+        "@ton/core": "^0.53.0",
         "@ton/crypto": "^3.2.0",
-        "@ton/sandbox": "^0.11.1",
-        "@ton/test-utils": "^0.3.1"
+        "@ton/sandbox": "^0.13.1",
+        "@ton/test-utils": "^0.4.0",
+        "blueprint-scaffold": "^1.0.0"
     },
     "packageManager": "yarn@1.22.19"
 }

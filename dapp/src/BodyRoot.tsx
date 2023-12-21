@@ -303,7 +303,7 @@ function BodyRoot(props: BodyRootProps) {
 															const _hasDeploy = 'sendDeploy' in wrappers[wrapperName][methods()];
 															setHasDeploy(_hasDeploy);
 															const methodName = Object.keys(wrappers[wrapperName][methods()])[_hasDeploy ? 1 : 0];
-															setMethod(methodName);
+															setMethod(noMethod);
 															setDestAddr('');
 															setAddrTouched(false);
 															setActionCardKey(methodName);

@@ -4,3 +4,4 @@ build
 yarn.lock
 vim.session
 *.log
+.DS_Store

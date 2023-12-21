@@ -73,6 +73,7 @@ export const choseField = (type: String) => {
 };
 
 export type ActionCardProps = {
+	visible: boolean;
 	methodName: string;
 	methodParams: Parameters;
 	isGet: boolean;
@@ -82,6 +83,7 @@ export type ActionCardProps = {
 };
 
 export const ActionCard: React.FC<ActionCardProps> = ({
+	visible,
 	methodName,
 	methodParams,
 	isGet,
@@ -228,7 +230,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 	const width = () => (paramFields.length === 0 ? '0' : '100%');
 	const buttonPadding = () => (paramFields.length === 0 ? '-8' : '-3');
 
-	return (
+	return visible ? (
 		<Center>
 			<Card
 				variant="outline"
@@ -336,5 +338,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 				</CardFooter>
 			</Card>
 		</Center>
+	) : (
+		<></>
 	);
 };

@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "https://1ixi1.github.io/blueproject/static/css/main.918643fd.css",
-    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.09f4a895.js",
+    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.d53aa6b1.js",
     "static/media/Inter-Bold.ttf": "https://1ixi1.github.io/blueproject/static/media/Inter-Bold.0eaf807b1cf0eceabe0f.ttf",
     "static/media/Inter-Medium.ttf": "https://1ixi1.github.io/blueproject/static/media/Inter-Medium.3f7acfe50aad7ad68548.ttf",
     "static/media/OFL.txt": "https://1ixi1.github.io/blueproject/static/media/OFL.0c14384376523c8072b7.txt",
     "index.html": "https://1ixi1.github.io/blueproject/index.html",
     "main.918643fd.css.map": "https://1ixi1.github.io/blueproject/static/css/main.918643fd.css.map",
-    "main.09f4a895.js.map": "https://1ixi1.github.io/blueproject/static/js/main.09f4a895.js.map"
+    "main.d53aa6b1.js.map": "https://1ixi1.github.io/blueproject/static/js/main.d53aa6b1.js.map"
   },
   "entrypoints": [
     "static/css/main.918643fd.css",
-    "static/js/main.09f4a895.js"
+    "static/js/main.d53aa6b1.js"
   ]
 }

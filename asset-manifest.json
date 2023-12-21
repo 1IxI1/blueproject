@@ -1,13 +1,16 @@
 {
   "files": {
-    "main.css": "https://1ixi1.github.io/blueproject/static/css/main.c5951c8f.css",
-    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.b352ec67.js",
+    "main.css": "https://1ixi1.github.io/blueproject/static/css/main.918643fd.css",
+    "main.js": "https://1ixi1.github.io/blueproject/static/js/main.10358ada.js",
+    "static/media/Inter-Bold.ttf": "https://1ixi1.github.io/blueproject/static/media/Inter-Bold.0eaf807b1cf0eceabe0f.ttf",
+    "static/media/Inter-Medium.ttf": "https://1ixi1.github.io/blueproject/static/media/Inter-Medium.3f7acfe50aad7ad68548.ttf",
+    "static/media/OFL.txt": "https://1ixi1.github.io/blueproject/static/media/OFL.0c14384376523c8072b7.txt",
     "index.html": "https://1ixi1.github.io/blueproject/index.html",
-    "main.c5951c8f.css.map": "https://1ixi1.github.io/blueproject/static/css/main.c5951c8f.css.map",
-    "main.b352ec67.js.map": "https://1ixi1.github.io/blueproject/static/js/main.b352ec67.js.map"
+    "main.918643fd.css.map": "https://1ixi1.github.io/blueproject/static/css/main.918643fd.css.map",
+    "main.10358ada.js.map": "https://1ixi1.github.io/blueproject/static/js/main.10358ada.js.map"
   },
   "entrypoints": [
-    "static/css/main.c5951c8f.css",
-    "static/js/main.b352ec67.js"
+    "static/css/main.918643fd.css",
+    "static/js/main.10358ada.js"
   ]
 }

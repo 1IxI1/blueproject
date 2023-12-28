@@ -15,3 +15,10 @@ vim.session
 !.yarn/sdks
 !.yarn/versions
 
+dapp/.yarn/*
+!dapp/.yarn/patches
+!dapp/.yarn/plugins
+!dapp/.yarn/releases
+!dapp/.yarn/sdks
+!dapp/.yarn/versions
+

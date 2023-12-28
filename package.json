@@ -25,5 +25,5 @@
         "@ton/test-utils": "^0.4.0",
         "blueprint-scaffold": "^1.0.1"
     },
-    "packageManager": "yarn@1.22.19"
+    "packageManager": "yarn@4.0.2"
 }

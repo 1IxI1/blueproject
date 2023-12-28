@@ -123,27 +123,27 @@
             "fieldTitle": ""
           }
         },
-        "outNames": []
+        "outNames": {}
       },
       "getJettonData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getTotalSupply": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getAdminAddress": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getContent": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getVotingAddress": {
         "tabName": "",
@@ -152,12 +152,12 @@
             "fieldTitle": ""
           }
         },
-        "outNames": []
+        "outNames": {}
       },
       "getVotingCode": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       }
     }
   },
@@ -284,7 +284,7 @@
       "getJettonBalance": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getVotedWeight": {
         "tabName": "",
@@ -296,7 +296,7 @@
             "fieldTitle": ""
           }
         },
-        "outNames": []
+        "outNames": {}
       },
       "getVoteKeeperAddress": {
         "tabName": "",
@@ -305,27 +305,27 @@
             "fieldTitle": ""
           }
         },
-        "outNames": []
+        "outNames": {}
       },
       "getJettonData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getDaoData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getLockedBalance": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getTotalBalance": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       }
     }
   },
@@ -337,7 +337,7 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       }
     }
   },
@@ -359,12 +359,12 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       },
       "getFullData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       }
     }
   },
@@ -412,7 +412,7 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": []
+        "outNames": {}
       }
     }
   }

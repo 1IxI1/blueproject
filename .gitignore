@@ -1,9 +1,17 @@
 node_modules
 temp
 build
-yarn.lock
-vim.session
+dist
 *.log
 .DS_Store
 dapp-backup
-dist
+vim.session
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+

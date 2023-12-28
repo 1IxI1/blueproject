@@ -1,31 +1,31 @@
 {
   "JettonMinter": {
     "defaultAddress": "",
-    "tabName": "Minter",
+    "tabName": "",
     "sendFunctions": {
       "sendDeploy": {
         "tabName": "",
         "params": {
           "value": {
-            "fieldTitle": "TONs"
+            "fieldTitle": ""
           }
         }
       },
       "sendMint": {
-        "tabName": "Mint",
+        "tabName": "",
         "params": {
           "to": {
-            "fieldTitle": "Receiver"
+            "fieldTitle": ""
           },
           "jetton_amount": {
-            "fieldTitle": "To mint"
+            "fieldTitle": ""
           },
           "forward_ton_amount": {
             "fieldTitle": "",
-            "overrideWithDefault": true
+            "overrideWithDefault": false
           },
           "total_ton_amount": {
-            "fieldTitle": "TONs",
+            "fieldTitle": "",
             "overrideWithDefault": false
           }
         }
@@ -117,35 +117,33 @@
     },
     "getFunctions": {
       "getWalletAddress": {
-        "tabName": "Wallet from address",
+        "tabName": "",
         "params": {
           "owner": {
-            "fieldTitle": "Owner"
+            "fieldTitle": ""
           }
         },
-        "outNames": {
-          "0": "JWallet Address"
-        }
+        "outNames": []
       },
       "getJettonData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getTotalSupply": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getAdminAddress": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getContent": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getVotingAddress": {
         "tabName": "",
@@ -154,12 +152,12 @@
             "fieldTitle": ""
           }
         },
-        "outNames": {}
+        "outNames": []
       },
       "getVotingCode": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       }
     }
   },
@@ -286,7 +284,7 @@
       "getJettonBalance": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getVotedWeight": {
         "tabName": "",
@@ -298,7 +296,7 @@
             "fieldTitle": ""
           }
         },
-        "outNames": {}
+        "outNames": []
       },
       "getVoteKeeperAddress": {
         "tabName": "",
@@ -307,27 +305,27 @@
             "fieldTitle": ""
           }
         },
-        "outNames": {}
+        "outNames": []
       },
       "getJettonData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getDaoData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getLockedBalance": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getTotalBalance": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       }
     }
   },
@@ -339,7 +337,7 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       }
     }
   },
@@ -361,12 +359,12 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       },
       "getFullData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       }
     }
   },
@@ -414,7 +412,7 @@
       "getData": {
         "tabName": "",
         "params": {},
-        "outNames": {}
+        "outNames": []
       }
     }
   }

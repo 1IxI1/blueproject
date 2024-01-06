@@ -1,7 +1,7 @@
 {
   "JettonMinter": {
     "defaultAddress": "",
-    "tabName": "Minter",
+    "tabName": "",
     "sendFunctions": {
       "sendDeploy": {
         "tabName": "",
@@ -117,13 +117,15 @@
     },
     "getFunctions": {
       "getWalletAddress": {
-        "tabName": "",
+        "tabName": "Wallet from address",
         "params": {
           "owner": {
-            "fieldTitle": ""
+            "fieldTitle": "Owner"
           }
         },
-        "outNames": {}
+        "outNames": {
+          "0": "JWallet"
+        }
       },
       "getJettonData": {
         "tabName": "",

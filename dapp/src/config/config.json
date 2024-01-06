@@ -1,31 +1,31 @@
 {
   "JettonMinter": {
     "defaultAddress": "",
-    "tabName": "",
+    "tabName": "Minter",
     "sendFunctions": {
       "sendDeploy": {
         "tabName": "",
         "params": {
           "value": {
-            "fieldTitle": ""
+            "fieldTitle": "TONs"
           }
         }
       },
       "sendMint": {
-        "tabName": "",
+        "tabName": "Mint",
         "params": {
           "to": {
-            "fieldTitle": ""
+            "fieldTitle": "Receiver"
           },
           "jetton_amount": {
-            "fieldTitle": ""
+            "fieldTitle": "To mint"
           },
           "forward_ton_amount": {
             "fieldTitle": "",
-            "overrideWithDefault": false
+            "overrideWithDefault": true
           },
           "total_ton_amount": {
-            "fieldTitle": "",
+            "fieldTitle": "TONs",
             "overrideWithDefault": false
           }
         }

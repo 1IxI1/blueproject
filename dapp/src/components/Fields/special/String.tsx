@@ -1,15 +1,10 @@
+// special because it has revert button
+// and no check logic needed for string
+
 import { RepeatIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Flex,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { FieldProps } from "../ActionCard";
+import { FieldProps } from "../../ActionCard";
 
 export function StringField(props: FieldProps) {
   const [text, setText] = useState<string>("");
@@ -29,8 +24,7 @@ export function StringField(props: FieldProps) {
       if (props.optional) {
         props.sendParam(props.paramName, undefined, true);
       } else {
-        if (defaultString)
-          props.sendParam(props.paramName, defaultString, true);
+        if (defaultString) props.sendParam(props.paramName, defaultString, true);
         else props.sendParam(props.paramName, text, true);
       }
     } else {
@@ -53,7 +47,7 @@ export function StringField(props: FieldProps) {
           <Box display="flex" alignItems="end">
             <Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
               {props.fieldName || props.paramName}
-              {defaultString || props.optional ? " (optional)" : ""}:
+              {props.hideOptional ? "" : defaultString || props.optional ? " (optional):" : ":"}
             </Text>
           </Box>
           <InputGroup>

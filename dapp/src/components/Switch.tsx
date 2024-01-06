@@ -22,11 +22,7 @@ export function BackForthIcon({ isRotated }: { isRotated: boolean }) {
   );
 }
 
-export default function Switch({
-  setToParent,
-}: {
-  setToParent: (isGetMethods: boolean) => void;
-}) {
+export default function Switch({ setToParent }: { setToParent: (isGetMethods: boolean) => void }) {
   const [isGet, setIsGet] = useState(false);
 
   return (

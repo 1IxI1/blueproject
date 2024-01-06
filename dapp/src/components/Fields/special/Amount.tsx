@@ -1,15 +1,11 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Text,
-} from "@chakra-ui/react";
+// special because it has `nano` button,
+// allows to input only numbers
+// and stands for 2 types: number and bigint
+
+import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { toNano } from "@ton/core";
-import { FieldProps } from "../ActionCard";
+import { FieldProps } from "../../ActionCard";
 
 export function AmountField(props: FieldProps) {
   const [amount, setAmount] = useState<string>("");
@@ -17,9 +13,7 @@ export function AmountField(props: FieldProps) {
   let defaultAmount: bigint | null = null;
   if (props.defaultValue) {
     try {
-      const parsedDefault = eval(
-        `(toNano) => { return ${props.defaultValue}; }`,
-      )(toNano);
+      const parsedDefault = eval(`(toNano) => { return ${props.defaultValue}; }`)(toNano);
       const type = typeof parsedDefault;
       if (type == "bigint" || type == "number") defaultAmount = parsedDefault;
       else throw new Error("defaultValue is not a number");
@@ -66,18 +60,12 @@ export function AmountField(props: FieldProps) {
           <Box display="flex" alignItems="end">
             <Text marginTop="4" size="md" fontWeight="semibold" alignSelf="end">
               {props.fieldName || props.paramName}
-              {defaultAmount || props.optional ? " (optional)" : ""}:
+              {props.hideOptional ? "" : defaultAmount || props.optional ? " (optional):" : ":"}
             </Text>
           </Box>
           <InputGroup>
             <Input
-              isInvalid={
-                !amount
-                  ? props.defaultValue || props.optional
-                    ? false
-                    : touched
-                  : false
-              }
+              isInvalid={!amount ? (props.defaultValue || props.optional ? false : touched) : false}
               placeholder={defaultAmount ? defaultAmount.toString() : "12300"}
               size="md"
               value={amount}

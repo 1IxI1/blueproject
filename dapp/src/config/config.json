@@ -159,6 +159,37 @@
         "params": {},
         "outNames": {}
       }
+    },
+    "definedTypes": {
+      "JettonMinterConfig": {
+        "shownName": "",
+        "properties": {
+          "admin": {
+            "fieldTitle": ""
+          },
+          "content": {
+            "fieldTitle": ""
+          },
+          "voting_code": {
+            "fieldTitle": ""
+          },
+          "testValue": {
+            "fieldTitle": "",
+            "overrideWithDefault": false
+          }
+        }
+      },
+      "JettonMinterContent": {
+        "shownName": "",
+        "properties": {
+          "type": {
+            "fieldTitle": ""
+          },
+          "uri": {
+            "fieldTitle": ""
+          }
+        }
+      }
     }
   },
   "JettonWallet": {
@@ -327,6 +358,47 @@
         "params": {},
         "outNames": {}
       }
+    },
+    "definedTypes": {
+      "JettonData": {
+        "shownName": "",
+        "properties": {
+          "balance": {
+            "fieldTitle": ""
+          },
+          "ownerAddress": {
+            "fieldTitle": ""
+          },
+          "masterAdderss": {
+            "fieldTitle": ""
+          },
+          "walletCode": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "JettonWalletConfig": {
+        "shownName": "",
+        "properties": {
+          "0": {
+            "fieldTitle": ""
+          },
+          "1": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "DaoData": {
+        "shownName": "",
+        "properties": {
+          "locked": {
+            "fieldTitle": ""
+          },
+          "lockExpiration": {
+            "fieldTitle": ""
+          }
+        }
+      }
     }
   },
   "VoteKeeper": {
@@ -339,7 +411,8 @@
         "params": {},
         "outNames": {}
       }
-    }
+    },
+    "definedTypes": {}
   },
   "Voting": {
     "defaultAddress": "",
@@ -365,6 +438,19 @@
         "tabName": "",
         "params": {},
         "outNames": {}
+      }
+    },
+    "definedTypes": {
+      "VotingConfig": {
+        "shownName": "",
+        "properties": {
+          "master": {
+            "fieldTitle": ""
+          },
+          "voting_id": {
+            "fieldTitle": ""
+          }
+        }
       }
     }
   },
@@ -413,6 +499,51 @@
         "tabName": "",
         "params": {},
         "outNames": {}
+      }
+    },
+    "definedTypes": {
+      "VotingResultsConfig": {
+        "shownName": "",
+        "properties": {
+          "voting_body": {
+            "fieldTitle": ""
+          },
+          "voting_duration": {
+            "fieldTitle": ""
+          },
+          "dao_address": {
+            "fieldTitle": ""
+          }
+        }
+      },
+      "VotingResultsData": {
+        "shownName": "",
+        "properties": {
+          "init": {
+            "fieldTitle": ""
+          },
+          "votingBody": {
+            "fieldTitle": ""
+          },
+          "votingDuration": {
+            "fieldTitle": ""
+          },
+          "daoAddress": {
+            "fieldTitle": ""
+          },
+          "finished": {
+            "fieldTitle": ""
+          },
+          "votingId": {
+            "fieldTitle": ""
+          },
+          "votesFor": {
+            "fieldTitle": ""
+          },
+          "votesAgainst": {
+            "fieldTitle": ""
+          }
+        }
       }
     }
   }

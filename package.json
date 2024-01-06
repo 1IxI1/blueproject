@@ -25,5 +25,8 @@
         "@ton/test-utils": "^0.4.0",
         "blueprint-scaffold": "^1.0.1"
     },
-    "packageManager": "yarn@4.0.2"
+    "packageManager": "yarn@4.0.2",
+    "resolutions": {
+        "blueprint-scaffold": "portal:/Users/victor/Projects/blueprint-scaffold"
+    }
 }

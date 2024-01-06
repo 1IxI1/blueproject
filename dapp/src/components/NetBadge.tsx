@@ -14,11 +14,7 @@ export default function NetworkBadge() {
   return (
     <>
       {wallet && (
-        <Box
-          bg={wallet.account.chain == CHAIN.MAINNET ? "blue.500" : "red.500"}
-          width="100%"
-          mb="-3"
-        >
+        <Box bg={wallet.account.chain == CHAIN.MAINNET ? "blue.500" : "red.500"} width="100%" mb="-3">
           <Box h="7px" />
           <Center>
             <Text fontWeight="bold" color="white" mb="16px">

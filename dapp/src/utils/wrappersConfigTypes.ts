@@ -5,6 +5,7 @@ export type ParamInfo = {
 };
 
 export type Parameters = Record<string, ParamInfo>;
+export type DefinedTypes = Record<string, Parameters | string>;
 
 export type DeployData = {
   canBeCreatedFromConfig: boolean;
@@ -19,6 +20,7 @@ export type WrapperInfo = {
   getFunctions: Functions;
   path: string;
   deploy: DeployData;
+  definedTypes: DefinedTypes;
 };
 
 export type WrappersData = Record<string, WrapperInfo>;
@@ -35,8 +37,13 @@ export type MethodConfig = {
   params: ParamsConfig;
 };
 
+export type TypeConfig = {
+  shownName: string;
+  properties: ParamsConfig;
+};
+
 export type GetMethodConfig = MethodConfig & {
-  outNames: string[];
+  outNames: string[] | {};
 };
 
 export type WrapperConfig = {
@@ -44,6 +51,7 @@ export type WrapperConfig = {
   tabName: string;
   sendFunctions: Record<string, MethodConfig>;
   getFunctions: Record<string, GetMethodConfig>;
+  definedTypes: Record<string, TypeConfig>;
 };
 
 export type WrappersConfig = Record<string, WrapperConfig>;

@@ -41,19 +41,13 @@ function App() {
 
     const urlStringNoBase = window.location.href.replace(base, origUrl.origin);
     const urlToParse = new URL(urlStringNoBase);
-    const pathParts = urlToParse.pathname
-      .split("/")
-      .filter((part) => part !== "");
+    const pathParts = urlToParse.pathname.split("/").filter((part) => part !== "");
 
     let providedWrapperFromPath: string | undefined;
     let providedMethodFromPath: string | undefined;
     let providedAddressFromPath: string | undefined;
     if (pathParts.length > 0) {
-      [
-        providedWrapperFromPath,
-        providedMethodFromPath,
-        providedAddressFromPath,
-      ] = pathParts.slice(0, 3);
+      [providedWrapperFromPath, providedMethodFromPath, providedAddressFromPath] = pathParts.slice(0, 3);
     } else {
       const params = new URLSearchParams(urlToParse.search);
       if ((providedWrapperFromPath = params.get("wrapper") || undefined)) {
@@ -74,17 +68,11 @@ function App() {
   return (
     <ChakraProvider theme={isGetMethods ? getTheme : sendTheme}>
       <NetworkBadge />
-      <Box
-        padding={["30px 0px", "20px 20px", "20px 70px", "20px 70px"]}
-        backgroundColor="#f7f9fb"
-        min-height="100vh"
-      >
+      <Box padding={["30px 0px", "20px 20px", "20px 70px", "20px 70px"]} backgroundColor="#f7f9fb" min-height="100vh">
         <Box minHeight="90vh">
           <Box fontFamily="Inter" bg="#F7F9FB">
             <Flex>
-              <AppTitle
-                title={import.meta.env.VITE_REACT_APP_TITLE || "Blueprint Dapp"}
-              />
+              <AppTitle title={import.meta.env.VITE_REACT_APP_TITLE || "Blueprint Dapp"} />
               <Spacer />
               <Flex alignItems="center" mt="-6">
                 <ConnectButton />

@@ -4,23 +4,23 @@ import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfil
 import inject from "@rollup/plugin-inject";
 
 export default defineConfig({
-    plugins: [react()],
-    base: "/blueproject/",
-    optimizeDeps: {
-        esbuildOptions: {
-            define: {
-                global: "globalThis",
-            },
-            plugins: [
-                NodeGlobalsPolyfillPlugin({
-                    buffer: true,
-                }),
-            ],
-        },
+  plugins: [react()],
+  base: process.env.GH_PAGES ? "/blueproject/" : "./",
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true,
+        }),
+      ],
     },
-    build: {
-        rollupOptions: {
-            plugins: [inject({ Buffer: ["Buffer", "Buffer"] })],
-        },
+  },
+  build: {
+    rollupOptions: {
+      plugins: [inject({ Buffer: ["Buffer", "Buffer"] })],
     },
+  },
 });

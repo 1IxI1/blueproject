@@ -56,29 +56,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.0.0":
-  version: 7.23.6
-  resolution: "@babel/core@npm:7.23.6"
-  dependencies:
-    "@ampproject/remapping": "npm:^2.2.0"
-    "@babel/code-frame": "npm:^7.23.5"
-    "@babel/generator": "npm:^7.23.6"
-    "@babel/helper-compilation-targets": "npm:^7.23.6"
-    "@babel/helper-module-transforms": "npm:^7.23.3"
-    "@babel/helpers": "npm:^7.23.6"
-    "@babel/parser": "npm:^7.23.6"
-    "@babel/template": "npm:^7.22.15"
-    "@babel/traverse": "npm:^7.23.6"
-    "@babel/types": "npm:^7.23.6"
-    convert-source-map: "npm:^2.0.0"
-    debug: "npm:^4.1.0"
-    gensync: "npm:^1.0.0-beta.2"
-    json5: "npm:^2.2.3"
-    semver: "npm:^6.3.1"
-  checksum: a02bae7d916029b70706dc301535e1b31e5d216f55d4ee6f64a15825c6b69ee2c14c52a213d1497ec414e925ed4e9d897d41fb0d75df9fea28ed2c0008790e31
-  languageName: node
-  linkType: hard
-
 "@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3":
   version: 7.23.3
   resolution: "@babel/core@npm:7.23.3"
@@ -102,6 +79,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/core@npm:^7.23.6":
+  version: 7.23.7
+  resolution: "@babel/core@npm:7.23.7"
+  dependencies:
+    "@ampproject/remapping": "npm:^2.2.0"
+    "@babel/code-frame": "npm:^7.23.5"
+    "@babel/generator": "npm:^7.23.6"
+    "@babel/helper-compilation-targets": "npm:^7.23.6"
+    "@babel/helper-module-transforms": "npm:^7.23.3"
+    "@babel/helpers": "npm:^7.23.7"
+    "@babel/parser": "npm:^7.23.6"
+    "@babel/template": "npm:^7.22.15"
+    "@babel/traverse": "npm:^7.23.7"
+    "@babel/types": "npm:^7.23.6"
+    convert-source-map: "npm:^2.0.0"
+    debug: "npm:^4.1.0"
+    gensync: "npm:^1.0.0-beta.2"
+    json5: "npm:^2.2.3"
+    semver: "npm:^6.3.1"
+  checksum: 38c9934973d384ed83369712978453eac91dc3f22167404dbdb272b64f602e74728a6f37012c53ee57e521b8ae2da60097f050497d9b6a212d28b59cdfb2cd1d
+  languageName: node
+  linkType: hard
+
 "@babel/generator@npm:^7.23.3, @babel/generator@npm:^7.7.2":
   version: 7.23.3
   resolution: "@babel/generator@npm:7.23.3"
@@ -114,7 +114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.23.4, @babel/generator@npm:^7.23.6":
+"@babel/generator@npm:^7.23.6":
   version: 7.23.6
   resolution: "@babel/generator@npm:7.23.6"
   dependencies:
@@ -341,14 +341,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.23.6":
-  version: 7.23.6
-  resolution: "@babel/helpers@npm:7.23.6"
+"@babel/helpers@npm:^7.23.7":
+  version: 7.23.7
+  resolution: "@babel/helpers@npm:7.23.7"
   dependencies:
     "@babel/template": "npm:^7.22.15"
-    "@babel/traverse": "npm:^7.23.6"
+    "@babel/traverse": "npm:^7.23.7"
     "@babel/types": "npm:^7.23.6"
-  checksum: df1cf6607676ad36f52f652ec03536f2732d70aef5e76dba5c964e34d49f3c2d3dcf9fb3740db359f53071d74b64606a833d5ba156f79f437f71bfe06e2e7e19
+  checksum: f74a61ad28a1bc1fdd9133ad571c07787b66d6db017c707b87c203b0cd06879cea8b33e9c6a8585765a4949efa5df3cc9e19b710fe867f11be38ee29fd4a0488
   languageName: node
   linkType: hard
 
@@ -383,7 +383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.23.4, @babel/parser@npm:^7.23.6":
+"@babel/parser@npm:^7.23.6":
   version: 7.23.6
   resolution: "@babel/parser@npm:7.23.6"
   bin:
@@ -617,7 +617,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.23.4, @babel/traverse@npm:^7.23.6":
+"@babel/traverse@npm:^7.23.6":
   version: 7.23.6
   resolution: "@babel/traverse@npm:7.23.6"
   dependencies:
@@ -635,6 +635,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/traverse@npm:^7.23.7":
+  version: 7.23.7
+  resolution: "@babel/traverse@npm:7.23.7"
+  dependencies:
+    "@babel/code-frame": "npm:^7.23.5"
+    "@babel/generator": "npm:^7.23.6"
+    "@babel/helper-environment-visitor": "npm:^7.22.20"
+    "@babel/helper-function-name": "npm:^7.23.0"
+    "@babel/helper-hoist-variables": "npm:^7.22.5"
+    "@babel/helper-split-export-declaration": "npm:^7.22.6"
+    "@babel/parser": "npm:^7.23.6"
+    "@babel/types": "npm:^7.23.6"
+    debug: "npm:^4.3.1"
+    globals: "npm:^11.1.0"
+  checksum: e32fceb4249beec2bde83968ddffe17444221c1ee5cd18c543a2feaf94e3ca83f2a4dfbc2dcca87cf226e0105973e0fe3717063a21e982a9de9945615ab3f3f5
+  languageName: node
+  linkType: hard
+
 "@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.3, @babel/types@npm:^7.3.3":
   version: 7.23.3
   resolution: "@babel/types@npm:7.23.3"
@@ -646,7 +664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.23.4, @babel/types@npm:^7.23.6, @babel/types@npm:^7.8.3":
+"@babel/types@npm:^7.23.6, @babel/types@npm:^7.8.3":
   version: 7.23.6
   resolution: "@babel/types@npm:7.23.6"
   dependencies:
@@ -1314,15 +1332,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tonconnect/isomorphic-eventsource@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@tonconnect/isomorphic-eventsource@npm:0.0.2"
-  dependencies:
-    eventsource: "npm:^2.0.2"
-  checksum: dbce08a4c1a5869b32452e7d37d0a2a5556fc6911f4c097aaa4ac8c6946c101ccba2ce4633803e512a9a0d0a19a71ae350585e49349887a8598c66ff04d0b6b9
-  languageName: node
-  linkType: hard
-
 "@tonconnect/isomorphic-fetch@npm:^0.0.2":
   version: 0.0.2
   resolution: "@tonconnect/isomorphic-fetch@npm:0.0.2"
@@ -1332,16 +1341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tonconnect/isomorphic-fetch@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@tonconnect/isomorphic-fetch@npm:0.0.3"
-  dependencies:
-    node-fetch: "npm:^2.6.9"
-  checksum: 7c1d8f972636548af48691b52012604734f73e9780322e85e769bebfcbd72aa63e04efda6f49569f575bddfbae50606eb2413eee81727cb359065ddddf389e3e
-  languageName: node
-  linkType: hard
-
-"@tonconnect/protocol@npm:^2.2.5, @tonconnect/protocol@npm:^2.2.6":
+"@tonconnect/protocol@npm:^2.2.5":
   version: 2.2.6
   resolution: "@tonconnect/protocol@npm:2.2.6"
   dependencies:
@@ -1359,17 +1359,6 @@ __metadata:
     "@tonconnect/isomorphic-fetch": "npm:^0.0.2"
     "@tonconnect/protocol": "npm:^2.2.5"
   checksum: 287aa4271e7a3c3e706f1e4d87d71f96739c2cdc716636411589d718d5aa15fb59c7a206a6d77c911a6455fe6e84bec76d812557c9585381aea78c07d9617f14
-  languageName: node
-  linkType: hard
-
-"@tonconnect/sdk@npm:^3.0.0-beta.3":
-  version: 3.0.0
-  resolution: "@tonconnect/sdk@npm:3.0.0"
-  dependencies:
-    "@tonconnect/isomorphic-eventsource": "npm:^0.0.2"
-    "@tonconnect/isomorphic-fetch": "npm:^0.0.3"
-    "@tonconnect/protocol": "npm:^2.2.6"
-  checksum: b2182ea52e09511e633a8287a3d72d3ea4279eeb46b750266258a7e903e87f74e8a7e81d1c0a063cb50a66d040a73c911ad0fc2b4496345f1dbf74ce50f8467a
   languageName: node
   linkType: hard
 
@@ -1818,33 +1807,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"blueprint-scaffold@npm:^1.0.1":
-  version: 1.0.4
-  resolution: "blueprint-scaffold@npm:1.0.4"
+"blueprint-scaffold@portal:/Users/victor/Projects/blueprint-scaffold::locator=jetton-dao%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "blueprint-scaffold@portal:/Users/victor/Projects/blueprint-scaffold::locator=jetton-dao%40workspace%3A."
   dependencies:
-    "@babel/core": "npm:^7.0.0"
-    "@babel/generator": "npm:^7.23.4"
-    "@babel/parser": "npm:^7.23.4"
+    "@babel/core": "npm:^7.23.6"
+    "@babel/generator": "npm:^7.23.6"
+    "@babel/parser": "npm:^7.23.6"
     "@babel/preset-typescript": "npm:^7.23.3"
-    "@babel/traverse": "npm:^7.23.4"
-    "@babel/types": "npm:^7.23.4"
-    "@orbs-network/ton-access": "npm:^2.3.3"
-    "@tonconnect/sdk": "npm:^3.0.0-beta.3"
+    "@babel/traverse": "npm:^7.23.6"
+    "@babel/types": "npm:^7.23.6"
     arg: "npm:^5.0.2"
-    chalk: "npm:^4.1.0"
-    dotenv: "npm:^16.1.4"
-    inquirer: "npm:^8.2.5"
-    qrcode-terminal: "npm:^0.12.0"
-    ton-x: "npm:^2.1.0"
-    ts-node: "npm:^10.9.1"
   peerDependencies:
     "@ton/blueprint": ">=0.12.0"
     "@ton/core": ">=0.49.2"
     "@ton/crypto": ">=3.2.0"
     "@ton/ton": ">=13.4.1"
-  checksum: ed58a21dc671b7bb8eff4f8da24afe1d7e60d9d141424af8e2217efcd5f063626a34ff6be558cbf7c36cb72582f6b1135dce1570b034db08261a4f8f49e595cb
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "bn.js@npm:4.11.6":
   version: 4.11.6

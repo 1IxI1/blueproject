@@ -1,6 +1,6 @@
 import { Badge, Box, Flex, Text } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { FieldProps } from "../ActionCard";
+import { FieldProps } from "../../ActionCard";
 
 export function NullField(props: FieldProps) {
   useEffect(() => {
